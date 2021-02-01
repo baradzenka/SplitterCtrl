@@ -1,0 +1,446 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "Resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Russian (Russia) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_RUS)
+LANGUAGE LANG_RUSSIAN, SUBLANG_DEFAULT
+#pragma code_page(1251)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "Resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "#define _AFX_NO_SPLITTER_RESOURCES\r\n"
+    "#define _AFX_NO_OLE_RESOURCES\r\n"
+    "#define _AFX_NO_TRACKER_RESOURCES\r\n"
+    "#define _AFX_NO_PROPERTY_RESOURCES\r\n"
+    "\r\n"
+    "#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)\r\n"
+    "LANGUAGE 9, 1\r\n"
+    "#pragma code_page(1252)\r\n"
+    "#include ""Project.rc2""  // non-Microsoft Visual C++ edited resources\r\n"
+    "#include ""afxres.rc""         // Standard components\r\n"
+    "#include ""afxprint.rc""       // printing/print preview resources\r\n"
+    "#endif\r\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR2             CURSOR                  "Cursor1.cur"
+
+IDC_CURSOR1             CURSOR                  "Cursor2.cur"
+
+IDC_CURSOR3             CURSOR                  "Cursor3.cur"
+
+#endif    // Russian (Russia) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United States) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDR_MAINFRAME           ICON                    "Project.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDR_MAINFRAME           BITMAP                  "Toolbar.bmp"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Toolbar
+//
+
+IDR_MAINFRAME TOOLBAR 16, 15
+BEGIN
+    BUTTON      ID_EDIT_CUT
+    BUTTON      ID_EDIT_COPY
+    BUTTON      ID_EDIT_PASTE
+    SEPARATOR
+    BUTTON      ID_APP_ABOUT
+    SEPARATOR
+    BUTTON      ID_VIEW_SHOWDEMODIALOG
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Menu
+//
+
+IDR_MAINFRAME MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       ID_APP_EXIT
+    END
+    POPUP "&Edit"
+    BEGIN
+        MENUITEM "&Undo\tCtrl+Z",               ID_EDIT_UNDO
+        MENUITEM SEPARATOR
+        MENUITEM "Cu&t\tCtrl+X",                ID_EDIT_CUT
+        MENUITEM "&Copy\tCtrl+C",               ID_EDIT_COPY
+        MENUITEM "&Paste\tCtrl+V",              ID_EDIT_PASTE
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "Show Demo Dialog ...",        ID_VIEW_SHOWDEMODIALOG
+        MENUITEM SEPARATOR
+        MENUITEM "&Toolbar",                    ID_VIEW_TOOLBAR
+        MENUITEM "&Status Bar",                 ID_VIEW_STATUS_BAR
+    END
+    POPUP "!!! Action !!!"
+    BEGIN
+        POPUP "Resize"
+        BEGIN
+            MENUITEM "Static",                      ID_RESIZE_STATIC
+            MENUITEM "Static full",                 ID_RESIZE_STATICFULL
+            MENUITEM "Dynamic",                     ID_RESIZE_DYNAMIC
+        END
+        POPUP "Dragging"
+        BEGIN
+            MENUITEM "Static",                      ID_DRAGGING_STATIC
+            MENUITEM "Dynamic",                     ID_DRAGGING_DYNAMIC
+        END
+        MENUITEM SEPARATOR
+        MENUITEM "Set equal widths",            ID_SET_EQUAL_WIDTHS
+        MENUITEM "Set equal heights",           ID_SET_EQUAL_HEIGHTS
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About SplitterCtrl...",      ID_APP_ABOUT
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Accelerator
+//
+
+IDR_MAINFRAME ACCELERATORS
+BEGIN
+    "C",            ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    "V",            ID_EDIT_PASTE,          VIRTKEY, CONTROL, NOINVERT
+    VK_BACK,        ID_EDIT_UNDO,           VIRTKEY, ALT, NOINVERT
+    VK_DELETE,      ID_EDIT_CUT,            VIRTKEY, SHIFT, NOINVERT
+    VK_F6,          ID_NEXT_PANE,           VIRTKEY, NOINVERT
+    VK_F6,          ID_PREV_PANE,           VIRTKEY, SHIFT, NOINVERT
+    VK_INSERT,      ID_EDIT_COPY,           VIRTKEY, CONTROL, NOINVERT
+    VK_INSERT,      ID_EDIT_PASTE,          VIRTKEY, SHIFT, NOINVERT
+    "X",            ID_EDIT_CUT,            VIRTKEY, CONTROL, NOINVERT
+    "Z",            ID_EDIT_UNDO,           VIRTKEY, CONTROL, NOINVERT
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 235, 55
+STYLE DS_SETFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About SplitterCtrl"
+FONT 8, "Tahoma", 400, 0, 0xCC
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,11,17,20,20
+    RTEXT           "Author: Baradzenka Aleh",IDC_STATIC,45,18,96,8,SS_NOPREFIX
+    RTEXT           "baradzenka@gmail.com",IDC_STATIC,45,29,96,8
+    DEFPUSHBUTTON   "OK",IDOK,178,7,50,16,WS_GROUP
+END
+
+IDD_DEMODLG DIALOGEX 0, 0, 457, 340
+STYLE DS_SETFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME
+EXSTYLE WS_EX_TOOLWINDOW
+CAPTION "Demo Dialog"
+FONT 8, "Tahoma", 400, 0, 0xCC
+BEGIN
+    CONTROL         "Custom1",IDC_BUT1,"Button",BS_AUTORADIOBUTTON | WS_GROUP,14,15,43,10
+    CONTROL         "Custom2",IDC_BUT2,"Button",BS_AUTORADIOBUTTON,14,25,43,10
+    CONTROL         "Custom3",IDC_BUT3,"Button",BS_AUTORADIOBUTTON,14,35,43,10
+    CONTROL         "Custom4",IDC_BUT4,"Button",BS_AUTORADIOBUTTON,14,45,43,10
+    CONTROL         "Custom5",IDC_BUT5,"Button",BS_AUTORADIOBUTTON,68,15,43,10
+    CONTROL         "Custom6",IDC_BUT6,"Button",BS_AUTORADIOBUTTON,68,25,43,10
+    CONTROL         "Custom7",IDC_BUT7,"Button",BS_AUTORADIOBUTTON,68,35,43,10
+    CONTROL         "Custom8",IDC_BUT8,"Button",BS_AUTORADIOBUTTON,68,45,43,10
+    CONTROL         "Show border",IDC_BUT11,"Button",BS_AUTOCHECKBOX | WS_GROUP | WS_TABSTOP,9,60,57,10
+    CONTROL         "Active horizontal splitters",IDC_BUT12,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,71,97,10
+    CONTROL         "Active vertical splitters",IDC_BUT13,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,9,81,89,10
+    CONTROL         "System",IDC_BUT21,"Button",BS_AUTORADIOBUTTON | WS_GROUP,23,105,39,10
+    CONTROL         "User",IDC_BUT22,"Button",BS_AUTORADIOBUTTON,23,115,31,10
+    CONTROL         "Left-Top",IDC_BUT31,"Button",BS_AUTORADIOBUTTON | WS_GROUP,23,137,43,10
+    CONTROL         "Left-Bottom",IDC_BUT32,"Button",BS_AUTORADIOBUTTON,23,147,54,10
+    CONTROL         "Right-Top",IDC_BUT33,"Button",BS_AUTORADIOBUTTON,23,157,47,10
+    CONTROL         "Right-Bottom",IDC_BUT34,"Button",BS_AUTORADIOBUTTON,23,167,58,10
+    CONTROL         "Static",IDC_BUT41,"Button",BS_AUTORADIOBUTTON | WS_GROUP,15,191,34,10
+    CONTROL         "Static full",IDC_BUT42,"Button",BS_AUTORADIOBUTTON,15,202,45,10
+    CONTROL         "Dynamic",IDC_BUT43,"Button",BS_AUTORADIOBUTTON,15,212,43,10
+    CONTROL         "Static",IDC_BUT51,"Button",BS_AUTORADIOBUTTON | WS_GROUP,73,194,34,10
+    CONTROL         "Dynamic",IDC_BUT52,"Button",BS_AUTORADIOBUTTON,73,205,43,10
+    PUSHBUTTON      "Set min sizes: 0x0 px",IDC_BUT61,9,235,94,12
+    PUSHBUTTON      "Set min sizes: 20x40 px",IDC_BUT62,9,250,94,12
+    PUSHBUTTON      "Set equal widths",IDC_BUT63,9,267,78,12
+    PUSHBUTTON      "Set equal heights",IDC_BUT64,9,282,78,12
+    PUSHBUTTON      "Set widths: 20%|60%|20%",IDC_BUT65,9,299,110,12
+    PUSHBUTTON      "Set heights: 10%|30%|60%",IDC_BUT66,9,314,110,12
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,10,228,112,1
+    LTEXT           "Cursors:",IDC_STATIC,9,96,28,8
+    LTEXT           "Style:",IDC_STATIC,9,5,20,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDVERT,132,10,1,301
+    LTEXT           "Snap:",IDC_STATIC,9,128,20,8
+    LTEXT           "Resize:",IDC_STATIC,9,181,24,8
+    LTEXT           "Dragging:",IDC_STATIC,66,181,32,8
+    CONTROL         "",IDC_STATIC,"Static",SS_ETCHEDHORZ,10,333,111,1
+    CONTROL         "",IDC_SPLITTERCTRL_BASE,"Static",SS_BLACKRECT,138,4,313,331
+END
+
+IDD_DIALOG DIALOGEX 0, 0, 211, 97
+STYLE DS_SETFONT | WS_CHILD
+FONT 8, "Tahoma", 400, 0, 0xCC
+BEGIN
+    ICON            IDR_MAINFRAME,-1,19,34,20,20
+    CTEXT           "Dialog 10-02",-1,65,30,88,8,SS_NOPREFIX
+    DEFPUSHBUTTON   "Show MessageBox",IDC_BUTTON1,65,43,88,14,WS_GROUP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904e4"
+        BEGIN
+            VALUE "CompanyName", "TODO: <Company name>"
+            VALUE "FileDescription", "TODO: <File description>"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "SplitterCtrl.exe"
+            VALUE "LegalCopyright", "TODO: (c) <Company name>.  All rights reserved."
+            VALUE "OriginalFilename", "SplitterCtrl.exe"
+            VALUE "ProductName", "TODO: <Product name>"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1252
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_ABOUTBOX, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 228
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 48
+    END
+
+    IDD_DEMODLG, DIALOG
+    BEGIN
+        RIGHTMARGIN, 456
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_DEMODLG AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// String Table
+//
+
+STRINGTABLE
+BEGIN
+    IDR_MAINFRAME           "SplitterCtrl"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_APP_TITLE       "SplitterCtrl"
+    AFX_IDS_IDLEMESSAGE     "Ready"
+END
+
+STRINGTABLE
+BEGIN
+    ID_INDICATOR_EXT        "EXT"
+    ID_INDICATOR_CAPS       "CAP"
+    ID_INDICATOR_NUM        "NUM"
+    ID_INDICATOR_SCRL       "SCRL"
+    ID_INDICATOR_OVR        "OVR"
+    ID_INDICATOR_REC        "REC"
+END
+
+STRINGTABLE
+BEGIN
+    ID_FILE_PAGE_SETUP      "Change the printing options\nPage Setup"
+    ID_FILE_PRINT_SETUP     "Change the printer and printing options\nPrint Setup"
+    ID_FILE_PRINT           "Print the active document\nPrint"
+    ID_FILE_PRINT_PREVIEW   "Display full pages\nPrint Preview"
+END
+
+STRINGTABLE
+BEGIN
+    ID_APP_ABOUT            "Display program information, version number and copyright\nAbout"
+    ID_APP_EXIT             "Quit the application; prompts to save documents\nExit"
+END
+
+STRINGTABLE
+BEGIN
+    ID_NEXT_PANE            "Switch to the next window pane\nNext Pane"
+    ID_PREV_PANE            "Switch back to the previous window pane\nPrevious Pane"
+END
+
+STRINGTABLE
+BEGIN
+    ID_WINDOW_SPLIT         "Split the active window into panes\nSplit"
+END
+
+STRINGTABLE
+BEGIN
+    ID_EDIT_CLEAR           "Erase the selection\nErase"
+    ID_EDIT_CLEAR_ALL       "Erase everything\nErase All"
+    ID_EDIT_COPY            "Copy the selection and put it on the Clipboard\nCopy"
+    ID_EDIT_CUT             "Cut the selection and put it on the Clipboard\nCut"
+    ID_EDIT_FIND            "Find the specified text\nFind"
+    ID_EDIT_PASTE           "Insert Clipboard contents\nPaste"
+    ID_EDIT_REPEAT          "Repeat the last action\nRepeat"
+    ID_EDIT_REPLACE         "Replace specific text with different text\nReplace"
+    ID_EDIT_SELECT_ALL      "Select the entire document\nSelect All"
+    ID_EDIT_UNDO            "Undo the last action\nUndo"
+    ID_EDIT_REDO            "Redo the previously undone action\nRedo"
+END
+
+STRINGTABLE
+BEGIN
+    ID_VIEW_TOOLBAR         "Show or hide the toolbar\nToggle ToolBar"
+    ID_VIEW_STATUS_BAR      "Show or hide the status bar\nToggle StatusBar"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCSIZE          "Change the window size"
+    AFX_IDS_SCMOVE          "Change the window position"
+    AFX_IDS_SCMINIMIZE      "Reduce the window to an icon"
+    AFX_IDS_SCMAXIMIZE      "Enlarge the window to full size"
+    AFX_IDS_SCNEXTWINDOW    "Switch to the next document window"
+    AFX_IDS_SCPREVWINDOW    "Switch to the previous document window"
+    AFX_IDS_SCCLOSE         "Close the active window and prompts to save the documents"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_SCRESTORE       "Restore the window to normal size"
+    AFX_IDS_SCTASKLIST      "Activate Task List"
+END
+
+STRINGTABLE
+BEGIN
+    AFX_IDS_PREVIEW_CLOSE   "Close print preview mode\nCancel Preview"
+END
+
+#endif    // English (United States) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+#define _AFX_NO_SPLITTER_RESOURCES
+#define _AFX_NO_OLE_RESOURCES
+#define _AFX_NO_TRACKER_RESOURCES
+#define _AFX_NO_PROPERTY_RESOURCES
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 9, 1
+#pragma code_page(1252)
+#include "Project.rc2"  // non-Microsoft Visual C++ edited resources
+#include "afxres.rc"         // Standard components
+#include "afxprint.rc"       // printing/print preview resources
+#endif
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
