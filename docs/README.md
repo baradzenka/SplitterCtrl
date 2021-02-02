@@ -48,7 +48,7 @@ m_Splitter.SetWindow(0,1,m_List2.m_hWnd);
 
 // Load state from registry.
 if( !m_Splitter.LoadState(AfxGetApp(),"SplitterCtrl","SplitterState") )
-{  m_Splitter.Update();
+{  m_Splitter.Update();   // !!!
    m_Splitter.SetColumnsEqualWidth();   // error -> create default state.
 }
 m_Splitter.Update();
