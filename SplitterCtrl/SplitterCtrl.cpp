@@ -12,7 +12,7 @@
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrl::Private : IRecalc
+class SplitterCtrl::Private : public IRecalc
 {	template<typename T> struct Matrix
 	{	Matrix()
 		{	m_iRow = m_iCol = 0;
@@ -146,6 +146,7 @@ public:
 
 public:
 	Private(SplitterCtrl &owner);
+	~Private();
 
 private:
 	SplitterCtrl &o;
@@ -156,8 +157,8 @@ private:   // SplitterCtrl::IRecalc.
 	virtual int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const;
 
 public:
-	Draw *m_pDrawManager;
-	IRecalc *m_pRecalcManager;
+	Draw *m_pDrawMngr;
+	IRecalc *m_pRecalcMngr;
 		// 
 	static CSize m_szDefWindowSize;
 	enum { HTSplitterHorz=0x0000fff0, HTSplitterVert=0x0000fff1, HTSplitterCross=0x0000fff2 };
@@ -189,7 +190,6 @@ public:
 	static std::pair<SplitterCtrl *,void (SplitterCtrl::*)()> m_pFuncCancelDragging;
 
 public:
-	void ResetState();
 	void Recalc();
 	void RecalcStatic(CRect *rc, int iCountRow, int iCountColumn);
 	void RecalcStaticFull(CRect *rc, int iCountRow, int iCountColumn);
@@ -217,7 +217,6 @@ std::pair<SplitterCtrl *,void (SplitterCtrl::*)()> SplitterCtrl::Private::m_pFun
 IMPLEMENT_DYNCREATE(SplitterCtrl,CWnd)
 /////////////////////////////////////////////////////////////////////////////
 BEGIN_MESSAGE_MAP(SplitterCtrl, CWnd)
-	ON_WM_DESTROY()
 	ON_WM_NCCALCSIZE()
 	ON_WM_NCPAINT()
 	ON_WM_PAINT()
@@ -235,38 +234,45 @@ BEGIN_MESSAGE_MAP(SplitterCtrl, CWnd)
 END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // 
-SplitterCtrl::SplitterCtrl() : p( *new Private(*this) )
-{	p.ResetState();
+SplitterCtrl::SplitterCtrl() : 
+	p( *new Private(*this) )
+{
 }
 // 
 SplitterCtrl::~SplitterCtrl()
-{	CWnd::DestroyWindow();
-	delete &p;
+{	delete &p;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
 SplitterCtrl::Private::Private(SplitterCtrl &owner) : o(owner)
-{	m_pDrawManager = NULL;
-	m_pRecalcManager = this;
-}
-// 
-void SplitterCtrl::Private::ResetState()
-{	m_SnapMode = SnapLeftTop;
+{	m_pDrawMngr = NULL;
+	m_pRecalcMngr = this;
+		// 
+	m_SnapMode = SnapLeftTop;
 	m_ResizeMode = ResizeStatic;
 	m_DraggingMode = DraggingStatic;
 	m_iMinWinWidth = m_iMinWinHeight = 0;
 	m_bShowBorder = true;
 	m_hCurHorz = m_hCurVert = m_hCurCross = NULL;
-		// 
-	m_iTotalWidth = m_iTotalHeight = 0;
-		// 
-	m_bDragHorz = m_bDragVert = m_bDragCross = false;
+}
+//
+SplitterCtrl::Private::~Private()
+{	if(m_hCurHorz)
+		::DestroyCursor(m_hCurHorz);
+	if(m_hCurVert)
+		::DestroyCursor(m_hCurVert);
+	if(m_hCurCross)
+		::DestroyCursor(m_hCurCross);
+	if(m_hKeyboardHook)
+	{	::UnhookWindowsHookEx(m_hKeyboardHook);
+		m_hKeyboardHook = NULL;
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
 BOOL SplitterCtrl::Create(LPCTSTR /*className*/, LPCTSTR /*windowName*/, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext* /*context*/)
-{	return Create(parentWnd,style,rect,id) ? TRUE : FALSE;
+{	return Create(parentWnd,style,rect,id);
 }
 // 
 bool SplitterCtrl::Create(CWnd *parentWnd, DWORD style, RECT const &rect, UINT id)
@@ -274,27 +280,12 @@ bool SplitterCtrl::Create(CWnd *parentWnd, DWORD style, RECT const &rect, UINT i
 	if( !CWnd::Create(classname,_T(""),style | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,rect,parentWnd,id) )
 		return false;
 		// 
-	SetCursors(::LoadCursor(NULL,IDC_SIZENS),::LoadCursor(NULL,IDC_SIZEWE),::LoadCursor(NULL,IDC_SIZEALL));
-	SetWindowPos(NULL, 0,0,0,0, SWP_NOZORDER | SWP_NOMOVE | SWP_NOSIZE | SWP_NOCOPYBITS);
+	if(!p.m_hCurHorz && !p.m_hCurVert && !p.m_hCurCross)
+		SetCursors(::LoadCursor(NULL,IDC_SIZENS),::LoadCursor(NULL,IDC_SIZEWE),::LoadCursor(NULL,IDC_SIZEALL));
+	p.m_iTotalWidth = p.m_iTotalHeight = 0;
+	p.m_bDragHorz = p.m_bDragVert = p.m_bDragCross = false;
 		// 
 	return true;
-}
-/////////////////////////////////////////////////////////////////////////////
-// 
-void SplitterCtrl::OnDestroy()
-{	if(p.m_hCurHorz)
-		::DestroyCursor(p.m_hCurHorz);
-	if(p.m_hCurVert)
-		::DestroyCursor(p.m_hCurVert);
-	if(p.m_hCurCross)
-		::DestroyCursor(p.m_hCurCross);
-	if(p.m_hKeyboardHook)
-	{	::UnhookWindowsHookEx(p.m_hKeyboardHook);
-		p.m_hKeyboardHook = NULL;
-	}
-	p.ResetState();
-		// 
-	CWnd::OnDestroy();
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
@@ -338,7 +329,7 @@ SplitterCtrl::Private::Cell const *SplitterCtrl::Private::GetCell(int row, int c
 /////////////////////////////////////////////////////////////////////////////
 // 
 bool SplitterCtrl::AddRow()
-{	if(!p.m_Matrix.AddRow())
+{	if( !p.m_Matrix.AddRow() )
 		return false;
 		// 
 	const int row = GetCountRow();
@@ -380,7 +371,7 @@ bool SplitterCtrl::AddRow()
 /////////////////////////////////////////////////////////////////////////////
 // 
 bool SplitterCtrl::AddColumn()
-{	if(!p.m_Matrix.AddColumn())
+{	if( !p.m_Matrix.AddColumn() )
 		return false;
 		// 
 	const int row = GetCountRow();
@@ -421,7 +412,7 @@ bool SplitterCtrl::AddColumn()
 /////////////////////////////////////////////////////////////////////////////
 // 
 bool SplitterCtrl::InsertRow(int r)
-{	if(!p.m_Matrix.InsertRow(r))
+{	if( !p.m_Matrix.InsertRow(r) )
 		return false;
 		// 
 	const int col = GetCountColumn();
@@ -453,7 +444,7 @@ bool SplitterCtrl::InsertRow(int r)
 /////////////////////////////////////////////////////////////////////////////
 // 
 bool SplitterCtrl::InsertColumn(int c)
-{	if(!p.m_Matrix.InsertColumn(c))
+{	if( !p.m_Matrix.InsertColumn(c) )
 		return false;
 		// 
 	const int row = GetCountRow();
@@ -502,7 +493,7 @@ void SplitterCtrl::DeleteAll()
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::OnPaint()
-{	if(!p.m_pDrawManager)
+{	if(!p.m_pDrawMngr)
 	{	CPaintDC dc(this);
 		return;
 	}
@@ -513,34 +504,34 @@ void SplitterCtrl::OnPaint()
 		return;
 	}
 		// 
-	p.m_pDrawManager->DrawBegin(this,&virtwnd);
+	p.m_pDrawMngr->DrawBegin(this,&virtwnd);
 		// 
 	const int row = GetCountRow();
 	const int col = GetCountColumn();
 	if(row>0 && col>0)
 	{	for(int r=0; r<row-1; ++r)
 		{	const CRect rc = GetSplitterRect(true,r);
-			p.m_pDrawManager->DrawSplitter(this,&virtwnd,true,r,&rc);
+			p.m_pDrawMngr->DrawSplitter(this,&virtwnd,true,r,&rc);
 		}
 		for(int c=0; c<col-1; ++c)
 		{	const CRect rc = GetSplitterRect(false,c);
-			p.m_pDrawManager->DrawSplitter(this,&virtwnd,false,c,&rc);
+			p.m_pDrawMngr->DrawSplitter(this,&virtwnd,false,c,&rc);
 		}
 	}
 		// 
-	p.m_pDrawManager->DrawEnd(this,&virtwnd);
+	p.m_pDrawMngr->DrawEnd(this,&virtwnd);
 }
 /////////////////////////////////////////////////////////////////////////////
 //
 void SplitterCtrl::OnNcPaint()
 {	CWnd::OnNcPaint();
 		// 
-	if(p.m_bShowBorder && p.m_pDrawManager)
+	if(p.m_bShowBorder && p.m_pDrawMngr)
 	{	CWindowDC dc(this);
 		CRect rc;
 		CWnd::GetWindowRect(&rc);
 		rc.OffsetRect(-rc.left,-rc.top);
-		p.m_pDrawManager->DrawBorder(this,&dc,&rc);
+		p.m_pDrawMngr->DrawBorder(this,&dc,&rc);
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -554,20 +545,20 @@ void SplitterCtrl::Update()
 //
 void SplitterCtrl::SetDrawManager(SplitterCtrl::Draw *ptr)
 {	assert(ptr);
-	p.m_pDrawManager = ptr;
+	p.m_pDrawMngr = ptr;
 }
 // 
 SplitterCtrl::Draw *SplitterCtrl::GetDrawManager()
-{	return p.m_pDrawManager;
+{	return p.m_pDrawMngr;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::SetRecalcManager(IRecalc *ptr)
-{	p.m_pRecalcManager = (ptr ? ptr : &p);
+{	p.m_pRecalcMngr = (ptr ? ptr : &p);
 }
 // 
 SplitterCtrl::IRecalc *SplitterCtrl::GetRecalcManager()
-{	return p.m_pRecalcManager;
+{	return p.m_pRecalcMngr;
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -591,15 +582,15 @@ void SplitterCtrl::OnSize(UINT nType, int cx, int cy)
 /////////////////////////////////////////////////////////////////////////////
 //
 int SplitterCtrl::GetBorderWidth() const
-{	return p.m_pRecalcManager->GetBorderWidth(this,&p);
+{	return p.m_pRecalcMngr->GetBorderWidth(this,&p);
 }
 // 
 int SplitterCtrl::GetVertSplitterWidth() const
-{	return p.m_pRecalcManager->GetVertSplitterWidth(this,&p);
+{	return p.m_pRecalcMngr->GetVertSplitterWidth(this,&p);
 }
 // 
 int SplitterCtrl::GetHorzSplitterHeight() const
-{	return p.m_pRecalcManager->GetHorzSplitterHeight(this,&p);
+{	return p.m_pRecalcMngr->GetHorzSplitterHeight(this,&p);
 }
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -1598,10 +1589,10 @@ void SplitterCtrl::Private::DrawDragRectManage(CRect *rectOld, CRect const *rect
 		rcNew.SetRect(rectNew->left-rcNew.left,rectNew->top-rcNew.top,rectNew->right-rcNew.left,rectNew->bottom-rcNew.top);
 	}
 		// 
-	if(m_pDrawManager)
+	if(m_pDrawMngr)
 	{	CDC *dc = o.GetDCEx(NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
 		if(dc)
-		{	m_pDrawManager->DrawDragRect(&o,dc,horz,rectOld->IsRectNull()==TRUE,rectOld,&rcNew);
+		{	m_pDrawMngr->DrawDragRect(&o,dc,horz,rectOld->IsRectNull()==TRUE,rectOld,&rcNew);
 			o.ReleaseDC(dc);
 		}
 	}
@@ -1978,14 +1969,14 @@ bool SplitterCtrl::SaveState(CWinApp *app, TCHAR const *section, TCHAR const *en
 		SaveState(&ar);
 		ar.Flush();
 			// 
-		const UINT uDataSize = static_cast<UINT>( file.GetLength() );
-		BYTE *pData = file.Detach();
+		const UINT dataSize = static_cast<UINT>( file.GetLength() );
+		BYTE *data = file.Detach();
 			// 
-		if( !app->WriteProfileBinary(section,entry,pData,uDataSize) )
-		{	free(pData);
+		if( !app->WriteProfileBinary(section,entry,data,dataSize) )
+		{	free(data);
 			return false;
 		}
-		free(pData);
+		free(data);
 	}
 	catch(CMemoryException* pEx)
 	{	pEx->Delete();
@@ -2008,12 +1999,12 @@ bool SplitterCtrl::LoadState(CWinApp *app, TCHAR const *section, TCHAR const *en
 {	assert(app && section && entry);
 		//
 	bool res = false;
-	BYTE *pData = NULL;
-	UINT uDataSize;
+	BYTE *data = NULL;
+	UINT dataSize;
 		// 
 	try
-	{	if( app->GetProfileBinary(section,entry,&pData,&uDataSize) )
-		{	CMemFile file(pData,uDataSize);
+	{	if( app->GetProfileBinary(section,entry,&data/*out*/,&dataSize/*out*/) )
+		{	CMemFile file(data,dataSize);
 			CArchive ar(&file,CArchive::load);
 			LoadState(&ar);
 			res = true;
@@ -2028,8 +2019,8 @@ bool SplitterCtrl::LoadState(CWinApp *app, TCHAR const *section, TCHAR const *en
 	catch(...)
 	{
 	}
-	if(pData)
-		delete [] pData;
+	if(data)
+		delete [] data;
 		// 
 	return res;
 }

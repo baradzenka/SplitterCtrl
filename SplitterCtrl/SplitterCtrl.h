@@ -116,7 +116,7 @@ public:
 // PRIVATE
 ///////////////////////////////////////
 private:
-	struct Private;
+	class Private;
 	Private &p;
 
 ///////////////////////////////////////
@@ -125,7 +125,6 @@ private:
 protected:
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context = NULL);
-	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -174,11 +173,10 @@ struct SplitterCtrlStyle2 : SplitterCtrlStyle1
 struct SplitterCtrlStyle3 : SplitterCtrlStyle1
 {	virtual COLORREF GetBackgroundColor() const { return ::GetSysColor(COLOR_BTNFACE); }
 	virtual bool IsInnerBorderVisible() const { return false; }
-	virtual bool IsDotsVisible() const { return false; }
 };
 // 
 struct SplitterCtrlStyle4 : SplitterCtrlStyle3
-{	virtual bool IsDotsVisible() const { return true; }
+{	virtual bool IsDotsVisible() const { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
@@ -190,13 +188,12 @@ struct SplitterCtrlStyle5 : SplitterCtrlStyle1
 	virtual COLORREF GetBackgroundColor() const { return RGB(45,64,94); }
 	virtual bool IsInnerBorderVisible() const { return false; }
 	virtual COLORREF GetOuterBorderColor() const { return RGB(45,64,94); }
-	virtual bool IsDotsVisible() const { return false; }
+	virtual COLORREF GetDotsColor() const { return RGB(206,212,223); }
 	virtual CBrush *GetDragBrush() { static CBrush br(RGB(128,128,128)); return &br; }
 };
 // 
 struct SplitterCtrlStyle6 : SplitterCtrlStyle5
-{	virtual bool IsDotsVisible() const { return true; }
-	virtual COLORREF GetDotsColor() const { return RGB(206,212,223); }
+{	virtual bool IsDotsVisible() const { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
