@@ -17,9 +17,7 @@
 #define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// some CString constructors will be explicit
 
 
-#include <afxwin.h>         // MFC core and standard components
-#include <afxext.h>         // MFC extensions
-
+#include <afxext.h>        // MFC extensions
 #include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
 #include <afxcmn.h>			// MFC support for Windows Common Controls
 
