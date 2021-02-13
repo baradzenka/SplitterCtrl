@@ -14,11 +14,11 @@ class SplitterCtrl : public CWnd
 ///////////////////////////////////////
 public:
 	struct Draw
-	{	virtual void DrawBegin(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) {}
-		virtual void DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, int /*idx*/, CRect const * /*rect*/) {}
-		virtual void DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, bool /*firstTime*/, CRect const * /*rectOld*/, CRect const * /*rectNew*/) {}
-		virtual void DrawBorder(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, CRect const * /*rect*/) {}
-		virtual void DrawEnd(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) {}
+	{	virtual void DrawBegin(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) const {}
+		virtual void DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, int /*idx*/, CRect const * /*rect*/) const {}
+		virtual void DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, bool /*firstTime*/, CRect const * /*rectOld*/, CRect const * /*rectNew*/) const {}
+		virtual void DrawBorder(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, CRect const * /*rect*/) const {}
+		virtual void DrawEnd(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) const {}
 	};
 	interface IRecalc
 	{	virtual int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const = 0;
@@ -41,13 +41,13 @@ public:
 	void DeleteAll();
 	void Update();   // recalculate control.
 		// 
-	void SetDrawManager(Draw *p);
+	void SetDrawManager(Draw *p/*or null*/);
 	Draw *GetDrawManager();
-	void SetRecalcManager(IRecalc *p);   // or NULL for default manager.
+	void SetRecalcManager(IRecalc *p/*or null*/);   // NULL for default manager.
 	IRecalc *GetRecalcManager();
 		// 
 	void SetCursors(HCURSOR horz, HCURSOR vert, HCURSOR cross);
-	void SetCursors(HMODULE module, UINT idHorz, UINT idVert, UINT idCross);
+	void SetCursors(HMODULE module, UINT horz, UINT vert, UINT cross);
 		// 
 	void SetWindow(int row, int col, HWND hWnd);
 	HWND GetWindow(int row, int col) const;
@@ -103,9 +103,9 @@ public:
 	int GetHorzSplitterHeight() const;
 		// 
 	bool LoadState(CWinApp *app, TCHAR const *section, TCHAR const *entry);   // load state from registry.
-	bool SaveState(CWinApp *app, TCHAR const *section, TCHAR const *entry);   // save state in registry.
+	bool SaveState(CWinApp *app, TCHAR const *section, TCHAR const *entry) const;   // save state in registry.
 	void LoadState(CArchive *ar);
-	void SaveState(CArchive *ar);
+	void SaveState(CArchive *ar) const;
 
 ///////////////////////////////////////
 // PRIVATE
@@ -120,6 +120,7 @@ private:
 protected:
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context = NULL);
+	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
 	afx_msg void OnSize(UINT nType, int cx, int cy);
@@ -137,19 +138,23 @@ protected:
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrlStyle1 : SplitterCtrl::IRecalc, SplitterCtrl::Draw
-{	void Install(SplitterCtrl *ctrl);
+struct SplitterCtrlStyle1 : 
+	SplitterCtrl::Draw,
+	SplitterCtrl::IRecalc
+{
+	void Install(SplitterCtrl *ctrl);
+
+protected:
+		// SplitterCtrl::Draw.
+	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const;
+	virtual void DrawDragRect(SplitterCtrl const *ctrl, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew) const;
+	virtual void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) const;
+	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const;
 
 		// SplitterCtrl::IRecalc.
 	virtual int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const;
 	virtual int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const;
 	virtual int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const;
-
-		// SplitterCtrl::Draw.
-	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect);
-	virtual void DrawDragRect(SplitterCtrl const *ctrl, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew);
-	virtual void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect);
-	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc);
 
 	virtual COLORREF GetBackgroundColor() const { return ::GetSysColor(COLOR_WINDOW); }
 	virtual bool IsInnerBorderVisible() const { return true; }
@@ -157,25 +162,27 @@ struct SplitterCtrlStyle1 : SplitterCtrl::IRecalc, SplitterCtrl::Draw
 	virtual COLORREF GetOuterBorderColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
 	virtual bool IsDotsVisible() const { return true; }
 	virtual COLORREF GetDotsColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
-	virtual CBrush *GetDragBrush() { return NULL; }
+	virtual CBrush *GetDragBrush() const { return NULL; }
+
+	static void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int count, int size, COLORREF color);
 };
 // 
-struct SplitterCtrlStyle2 : SplitterCtrlStyle1
+class SplitterCtrlStyle2 : public SplitterCtrlStyle1
 {	virtual bool IsDotsVisible() const { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrlStyle3 : SplitterCtrlStyle1
+class SplitterCtrlStyle3 : public SplitterCtrlStyle1
 {	virtual COLORREF GetBackgroundColor() const { return ::GetSysColor(COLOR_BTNFACE); }
 	virtual bool IsInnerBorderVisible() const { return false; }
 };
 // 
-struct SplitterCtrlStyle4 : SplitterCtrlStyle3
+class SplitterCtrlStyle4 : public SplitterCtrlStyle3
 {	virtual bool IsDotsVisible() const { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrlStyle5 : SplitterCtrlStyle1
+class SplitterCtrlStyle5 : public SplitterCtrlStyle1
 {		// SplitterCtrl::IRecalc.
 	virtual int GetVertSplitterWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const { return 6; }
 	virtual int GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const { return 6; }
@@ -184,33 +191,35 @@ struct SplitterCtrlStyle5 : SplitterCtrlStyle1
 	virtual bool IsInnerBorderVisible() const { return false; }
 	virtual COLORREF GetOuterBorderColor() const { return RGB(45,64,94); }
 	virtual COLORREF GetDotsColor() const { return RGB(206,212,223); }
-	virtual CBrush *GetDragBrush() { static CBrush br(RGB(128,128,128)); return &br; }
+	virtual CBrush *GetDragBrush() const { static CBrush br(RGB(128,128,128)); return &br; }
 };
 // 
-struct SplitterCtrlStyle6 : SplitterCtrlStyle5
+class SplitterCtrlStyle6 : public SplitterCtrlStyle5
 {	virtual bool IsDotsVisible() const { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrlStyle7 : SplitterCtrlStyle1
+class SplitterCtrlStyle7 : public SplitterCtrlStyle1
 {		// SplitterCtrl::Draw.
-	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect);
-	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc);
+	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const;
+	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const;
 
 	virtual bool IsInnerBorderVisible() const { return false; }
 	virtual COLORREF GetOuterBorderColor() const { return RGB(77,115,61); }
 	virtual bool IsDotsVisible() const { return false; }
+
+	static void DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom);
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
-struct SplitterCtrlStyle8 : SplitterCtrlStyle1
+class SplitterCtrlStyle8 : public SplitterCtrlStyle1
 {		// SplitterCtrl::IRecalc.
 	virtual int GetBorderWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const { return 2; }
 
 		// SplitterCtrl::Draw.
-	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect);
-	virtual void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect);
-	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc);
+	virtual void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const;
+	virtual void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) const;
+	virtual void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const;
 
 	virtual bool IsInnerBorderVisible() const { return false; }
 };
