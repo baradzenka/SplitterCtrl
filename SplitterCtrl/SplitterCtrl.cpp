@@ -276,14 +276,15 @@ BOOL SplitterCtrl::Create(LPCTSTR /*className*/, LPCTSTR /*windowName*/, DWORD s
 }
 // 
 bool SplitterCtrl::Create(CWnd *parentWnd, DWORD style, RECT const &rect, UINT id)
-{	const CString classname = AfxRegisterWndClass(CS_DBLCLKS,::LoadCursor(NULL,IDC_ARROW),NULL,NULL);
+{	p.m_iTotalWidth = p.m_iTotalHeight = 0;
+	p.m_bDragHorz = p.m_bDragVert = p.m_bDragCross = false;
+		// 
+	const CString classname = AfxRegisterWndClass(CS_DBLCLKS,::LoadCursor(NULL,IDC_ARROW),NULL,NULL);
 	if( !CWnd::Create(classname,_T(""),style | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,rect,parentWnd,id) )
 		return false;
 		// 
 	if(!p.m_hCurHorz && !p.m_hCurVert && !p.m_hCurCross)
 		SetCursors(::LoadCursor(NULL,IDC_SIZENS),::LoadCursor(NULL,IDC_SIZEWE),::LoadCursor(NULL,IDC_SIZEALL));
-	p.m_iTotalWidth = p.m_iTotalHeight = 0;
-	p.m_bDragHorz = p.m_bDragVert = p.m_bDragCross = false;
 		// 
 	return true;
 }
