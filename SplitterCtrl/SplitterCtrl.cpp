@@ -163,9 +163,14 @@ public:
 	Draw *m_pDrawMngr;
 	IRecalc *m_pRecalcMngr;
 		// 
-	static CSize m_szDefWindowSize;
-	enum { HTSplitterHorz=0x0000fff0, HTSplitterVert=0x0000fff1, HTSplitterCross=0x0000fff2 };
-		// 
+	Snap m_SnapMode;
+	Resize m_ResizeMode;
+	Dragging m_DraggingMode;
+	int m_iMinWinWidth, m_iMinWinHeight;
+	bool m_bShowBorder;
+	HCURSOR m_hCurHorz, m_hCurVert, m_hCurCross;
+
+public:
 	struct Cell
 	{	HWND wnd;
 		struct { bool horz, vert; } splitterActive;
@@ -177,12 +182,6 @@ public:
 		} real, store;
 	};
 	Matrix<Cell> m_Matrix;
-	Snap m_SnapMode;
-	Resize m_ResizeMode;
-	Dragging m_DraggingMode;
-	int m_iMinWinWidth, m_iMinWinHeight;
-	bool m_bShowBorder;
-	HCURSOR m_hCurHorz, m_hCurVert, m_hCurCross;
 		// 
 	int m_iTotalWidth, m_iTotalHeight;
 		// 
@@ -191,6 +190,9 @@ public:
 	CPoint m_ptStartDrag;
 	static HHOOK m_hKeyboardHook;
 	static std::pair<SplitterCtrl *,void (SplitterCtrl::*)()> m_pFuncCancelDragging;
+		// 
+	static const CSize m_szDefWindowSize;
+	enum { HTSplitterHorz=0x0000fff0, HTSplitterVert=0x0000fff1, HTSplitterCross=0x0000fff2 };
 
 public:
 	void Recalc();
@@ -212,7 +214,7 @@ public:
 };
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-CSize SplitterCtrl::Private::m_szDefWindowSize(100,100);
+const CSize SplitterCtrl::Private::m_szDefWindowSize(100,100);
 HHOOK SplitterCtrl::Private::m_hKeyboardHook = NULL;
 std::pair<SplitterCtrl *,void (SplitterCtrl::*)()> SplitterCtrl::Private::m_pFuncCancelDragging;
 /////////////////////////////////////////////////////////////////////////////
