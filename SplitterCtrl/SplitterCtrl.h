@@ -56,9 +56,9 @@ public:
 	void SetRowHeightForStatic(int row, int height);   // only for ResizeStatic and ResizeStaticFull.
 		// 
 	void SetColumnWidthForDynamic(int col, float percent);   // for ResizeDynamic (for sure use Update() after each call).
-	void SetColumnWidthsForDynamic(int const *percent/*in*/);   // set width for every column (count items in 'percent'==GetCountColumn()).
+	void SetColumnWidthsForDynamic(int const *percent/*in*/);   // set width for every column (number items in 'percent'==GetNumberColumn()).
 	void SetRowHeightForDynamic(int row, float percent);   // for ResizeDynamic (for sure use Update() after each call).
-	void SetRowHeightsForDynamic(int const *percent/*in*/);   // set height for every row (count items in 'percent'==GetCountRow()).
+	void SetRowHeightsForDynamic(int const *percent/*in*/);   // set height for every row (number items in 'percent'==GetNumberRow()).
 		// 
 	void SetRowsEqualHeight();
 	void SetColumnsEqualWidth();
@@ -68,8 +68,8 @@ public:
 	void SetWindowMinHeight(int height);   // min height of every window.
 	int GetHeightMinWindow() const;
 		// 
-	int GetCountRow() const;
-	int GetCountColumn() const;
+	int GetNumberRow() const;
+	int GetNumberColumn() const;
 	void HitTest(CPoint point, int *horz/*out,or null*/, int *vert/*out,or null*/) const;   // searching splitter in point.
 	RECT GetWindowRect(int row, int col) const;
 	RECT GetSplitterRect(bool horz, int idx) const;
@@ -164,7 +164,7 @@ protected:
 	virtual COLORREF GetDotsColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
 	virtual CBrush *GetDragBrush() const { return NULL; }
 
-	static void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int count, int size, COLORREF color);
+	static void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color);
 };
 // 
 class SplitterCtrlStyle2 : public SplitterCtrlStyle1

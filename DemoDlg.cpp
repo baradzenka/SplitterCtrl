@@ -275,14 +275,14 @@ void DemoDlg::OnBnClickedBut11()
 // Active horizontal splitters.
 // 
 void DemoDlg::OnBnClickedBut12()
-{	for(int r=0; r<m_Splitter.GetCountRow()-1; ++r)
+{	for(int r=0; r<m_Splitter.GetNumberRow()-1; ++r)
 		m_Splitter.ActivateHorzSplitter(r, GetButtonCheck(IDC_BUT12) );
 }
 /////////////////////////////////////////////////////////////////////////////
 // Active vertical splitters.
 // 
 void DemoDlg::OnBnClickedBut13()
-{	for(int c=0; c<m_Splitter.GetCountColumn()-1; ++c)
+{	for(int c=0; c<m_Splitter.GetNumberColumn()-1; ++c)
 		m_Splitter.ActivateVertSplitter(c, GetButtonCheck(IDC_BUT13) );
 }
 /////////////////////////////////////////////////////////////////////////////

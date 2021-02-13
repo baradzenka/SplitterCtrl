@@ -107,10 +107,10 @@ class SplitterCtrl::Private : public IRecalc
 			return &m_data[row][col];
 		}
 			// 
-		int GetCountRow() const
+		int GetNumberRow() const
 		{	return m_iRow;
 		}
-		int GetCountColumn() const
+		int GetNumberColumn() const
 		{	return m_iCol;
 		}
 
@@ -196,9 +196,9 @@ public:
 
 public:
 	void Recalc();
-	void RecalcStatic(CRect *rc, int countRow, int countColumn);
-	void RecalcStaticFull(CRect *rc, int countRow, int countColumn);
-	void RecalcDynamic(CRect *rc, int countRow, int countColumn);
+	void RecalcStatic(CRect *rc, int numberRow, int numberColumn);
+	void RecalcStaticFull(CRect *rc, int numberRow, int numberColumn);
+	void RecalcDynamic(CRect *rc, int numberRow, int numberColumn);
 	void StopDragging(bool reset);
 	void SetDraggingWidth(int col, int offset, std::map<HWND,CRect> &changedWindows/*out*/, CRect *rcdrag/*out*/);
 	void SetDraggingHeight(int row, int offset, std::map<HWND,CRect> &changedWindows/*out*/, CRect *rcdrag/*out*/);
@@ -348,8 +348,8 @@ bool SplitterCtrl::AddRow()
 {	if( !p.m_Matrix.AddRow() )
 		return false;
 		// 
-	const int row = GetCountRow();
-	const int col = GetCountColumn();
+	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 		// 
 	if(row==1)	// it is first addition of row.
 		for(int c=0; c<col; ++c)
@@ -390,8 +390,8 @@ bool SplitterCtrl::AddColumn()
 {	if( !p.m_Matrix.AddColumn() )
 		return false;
 		// 
-	const int row = GetCountRow();
-	const int col = GetCountColumn();
+	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 		// 
 	if(col==1)	// it is first addition of column.
 		for(int r=0; r<row; ++r)
@@ -431,7 +431,7 @@ bool SplitterCtrl::InsertRow(int r)
 {	if( !p.m_Matrix.InsertRow(r) )
 		return false;
 		// 
-	const int col = GetCountColumn();
+	const int col = GetNumberColumn();
 		// 
 	for(int c=0; c<col; ++c)
 	{	Private::Cell *p1 = p.GetCell(r,c);
@@ -463,7 +463,7 @@ bool SplitterCtrl::InsertColumn(int c)
 {	if( !p.m_Matrix.InsertColumn(c) )
 		return false;
 		// 
-	const int row = GetCountRow();
+	const int row = GetNumberRow();
 		// 
 	for(int r=0; r<row; ++r)
 	{	Private::Cell *p1 = p.GetCell(r,c);
@@ -522,8 +522,8 @@ void SplitterCtrl::OnPaint()
 		// 
 	p.m_pDrawMngr->DrawBegin(this,&virtwnd);
 		// 
-	const int row = GetCountRow();
-	const int col = GetCountColumn();
+	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 	if(row>0 && col>0)
 	{	for(int r=0; r<row-1; ++r)
 		{	const CRect rc = GetSplitterRect(true,r);
@@ -623,8 +623,8 @@ int SplitterCtrl::Private::GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, 
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::Private::Recalc()
-{	const int row = o.GetCountRow();
-	const int col = o.GetCountColumn();
+{	const int row = o.GetNumberRow();
+	const int col = o.GetNumberColumn();
 		// 
 	if(row>0 && col>0)
 	{	CRect rc;
@@ -638,29 +638,29 @@ void SplitterCtrl::Private::Recalc()
 	}
 }
 // 
-void SplitterCtrl::Private::RecalcStatic(CRect *rc, int countRow, int countColumn)
+void SplitterCtrl::Private::RecalcStatic(CRect *rc, int numberRow, int numberColumn)
 {	const int iSplitterWidth = o.GetVertSplitterWidth();
 	const int iSplitterHeight = o.GetHorzSplitterHeight();
 		// 
-	m_iTotalWidth = std::max(rc->Width()-(countColumn-1)*iSplitterWidth, countColumn*m_iMinWinWidth);
-	m_iTotalHeight = std::max(rc->Height()-(countRow-1)*iSplitterHeight, countRow*m_iMinWinHeight);
+	m_iTotalWidth = std::max(rc->Width()-(numberColumn-1)*iSplitterWidth, numberColumn*m_iMinWinWidth);
+	m_iTotalHeight = std::max(rc->Height()-(numberRow-1)*iSplitterHeight, numberRow*m_iMinWinHeight);
 		// 
 	int r,c, pos, tail, cx,cy;
 		// 
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapLeftBottom)
 	{	pos = rc->left;
 			// 
-		for(c=0; c<countColumn; ++c)
+		for(c=0; c<numberColumn; ++c)
 		{	Cell *cell = GetCell(0,c);
-			tail = std::max<int>(0, rc->right-pos - (countColumn-1-c)*(iSplitterWidth+m_iMinWinWidth));
+			tail = std::max<int>(0, rc->right-pos - (numberColumn-1-c)*(iSplitterWidth+m_iMinWinWidth));
 				// 
-			if(tail<cell->real.width || c==countColumn-1)
+			if(tail<cell->real.width || c==numberColumn-1)
 				cx = tail;
 			else
 				cx = cell->real.width;
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(r=0; r<countRow; ++r)
+			for(r=0; r<numberRow; ++r)
 			{	cell = GetCell(r,c);
 				cell->real.rc.left = pos;
 				cell->real.rc.right = pos+cx;
@@ -672,17 +672,17 @@ void SplitterCtrl::Private::RecalcStatic(CRect *rc, int countRow, int countColum
 	else	// RightTop or RightBottom.
 	{	pos = rc->right;
 			// 
-		for(c=0; c<countColumn; ++c)
+		for(c=0; c<numberColumn; ++c)
 		{	Cell *cell = GetCell(0,c);
-			tail = std::max<int>(0, pos-rc->left - (countColumn-1-c)*(iSplitterWidth+m_iMinWinWidth));
+			tail = std::max<int>(0, pos-rc->left - (numberColumn-1-c)*(iSplitterWidth+m_iMinWinWidth));
 				// 
-			if(tail<cell->real.width || c==countColumn-1)
+			if(tail<cell->real.width || c==numberColumn-1)
 				cx = tail;
 			else
 				cx = cell->real.width;
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(r=0; r<countRow; ++r)
+			for(r=0; r<numberRow; ++r)
 			{	cell = GetCell(r,c);
 				cell->real.rc.left = pos-cx;
 				cell->real.rc.right = pos;
@@ -695,17 +695,17 @@ void SplitterCtrl::Private::RecalcStatic(CRect *rc, int countRow, int countColum
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapRightTop)
 	{	pos = rc->top;
 			// 
-		for(r=0; r<countRow; ++r)
+		for(r=0; r<numberRow; ++r)
 		{	Cell *cell = GetCell(r,0);
-			tail = std::max<int>(0, rc->bottom-pos - (countRow-1-r)*(iSplitterHeight+m_iMinWinHeight));
+			tail = std::max<int>(0, rc->bottom-pos - (numberRow-1-r)*(iSplitterHeight+m_iMinWinHeight));
 				// 
-			if(tail<cell->real.height || r==countRow-1)
+			if(tail<cell->real.height || r==numberRow-1)
 				cy = tail;
 			else
 				cy = cell->real.height;
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(c=0; c<countColumn; ++c)
+			for(c=0; c<numberColumn; ++c)
 			{	cell = GetCell(r,c);
 				cell->real.rc.top = pos;
 				cell->real.rc.bottom = pos+cy;
@@ -720,17 +720,17 @@ void SplitterCtrl::Private::RecalcStatic(CRect *rc, int countRow, int countColum
 	else	// LeftBottom or RightBottom.
 	{	pos = rc->bottom;
 			// 
-		for(r=0; r<countRow; ++r)
+		for(r=0; r<numberRow; ++r)
 		{	Cell *cell = GetCell(r,0);
-			tail = std::max<int>(0, pos-rc->top - (countRow-1-r)*(iSplitterHeight+m_iMinWinHeight));
+			tail = std::max<int>(0, pos-rc->top - (numberRow-1-r)*(iSplitterHeight+m_iMinWinHeight));
 				// 
-			if(tail<cell->real.height || r==countRow-1)
+			if(tail<cell->real.height || r==numberRow-1)
 				cy = tail;
 			else
 				cy = cell->real.height;
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(c=0; c<countColumn; ++c)
+			for(c=0; c<numberColumn; ++c)
 			{	cell = GetCell(r,c);
 				cell->real.rc.top = pos-cy;
 				cell->real.rc.bottom = pos;
@@ -744,7 +744,7 @@ void SplitterCtrl::Private::RecalcStatic(CRect *rc, int countRow, int countColum
 	}
 }
 // 
-void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countColumn)
+void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int numberRow, int numberColumn)
 {	const int iSplitterWidth = o.GetVertSplitterWidth();
 	const int iSplitterHeight = o.GetHorzSplitterHeight();
 		// 
@@ -753,31 +753,31 @@ void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countC
 		// 
 	m_iTotalWidth = m_iTotalHeight=0;
 		// 		
-	for(c=0; c<countColumn; ++c)
-		if(c!=countColumn-1)
+	for(c=0; c<numberColumn; ++c)
+		if(c!=numberColumn-1)
 			m_iTotalWidth += GetCell(0,c)->real.width;
 		else	// last column.
-			m_iTotalWidth += std::max(m_iMinWinWidth,rc->Width()-(countColumn-1)*iSplitterWidth-m_iTotalWidth);
+			m_iTotalWidth += std::max(m_iMinWinWidth,rc->Width()-(numberColumn-1)*iSplitterWidth-m_iTotalWidth);
 		// 
-	for(r=0; r<countRow; ++r)
-		if(r!=countRow-1)
+	for(r=0; r<numberRow; ++r)
+		if(r!=numberRow-1)
 			m_iTotalHeight += GetCell(r,0)->real.height;
 		else	// last row.
-			m_iTotalHeight += std::max(m_iMinWinHeight,rc->Height()-(countRow-1)*iSplitterHeight-m_iTotalHeight);
+			m_iTotalHeight += std::max(m_iMinWinHeight,rc->Height()-(numberRow-1)*iSplitterHeight-m_iTotalHeight);
 		// 
 		// 
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapLeftBottom)
 	{	pos = rc->left;
 			// 
-		for(c=0; c<countColumn; ++c)
-		{	if(c!=countColumn-1)
+		for(c=0; c<numberColumn; ++c)
+		{	if(c!=numberColumn-1)
 				cx = GetCell(0,c)->real.width;
 			else	// last column.
 				cx = rc->right-pos;
 				// 
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(r=0; r<countRow; ++r)
+			for(r=0; r<numberRow; ++r)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.left = pos;
 				cell->real.rc.right = pos+cx;
@@ -789,15 +789,15 @@ void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countC
 	else	// RightTop or RightBottom.
 	{	pos = rc->right;
 			// 
-		for(c=0; c<countColumn; ++c)
-		{	if(c!=countColumn-1)
+		for(c=0; c<numberColumn; ++c)
+		{	if(c!=numberColumn-1)
 				cx = GetCell(0,c)->real.width;
 			else	// last column.
 				cx = pos-rc->left;
 				// 
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(r=0; r<countRow; ++r)
+			for(r=0; r<numberRow; ++r)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.left = pos-cx;
 				cell->real.rc.right = pos;
@@ -810,15 +810,15 @@ void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countC
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapRightTop)
 	{	pos = rc->top;
 			// 
-		for(r=0; r<countRow; ++r)
-		{	if(r!=countRow-1)
+		for(r=0; r<numberRow; ++r)
+		{	if(r!=numberRow-1)
 				cy = GetCell(r,0)->real.height;
 			else	// last row.
 				cy = rc->bottom-pos;
 				// 
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(c=0; c<countColumn; ++c)
+			for(c=0; c<numberColumn; ++c)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.top = pos;
 				cell->real.rc.bottom = pos+cy;
@@ -833,15 +833,15 @@ void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countC
 	else	// LeftBottom or RightBottom.
 	{	pos = rc->bottom;
 			// 
-		for(r=0; r<countRow; ++r)
-		{	if(r!=countRow-1)
+		for(r=0; r<numberRow; ++r)
+		{	if(r!=numberRow-1)
 				cy = GetCell(r,0)->real.height;
 			else	// last row.
 				cy = pos-rc->top;
 				// 
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(c=0; c<countColumn; ++c)
+			for(c=0; c<numberColumn; ++c)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.top = pos-cy;
 				cell->real.rc.bottom = pos;
@@ -855,12 +855,12 @@ void SplitterCtrl::Private::RecalcStaticFull(CRect *rc, int countRow, int countC
 	}
 }
 // 
-void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColumn)
+void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int numberRow, int numberColumn)
 {	const int iSplitterWidth = o.GetVertSplitterWidth();
 	const int iSplitterHeight = o.GetHorzSplitterHeight();
 		// 
-	m_iTotalWidth = std::max(rc->Width()-(countColumn-1)*iSplitterWidth, countColumn*m_iMinWinWidth);
-	m_iTotalHeight = std::max(rc->Height()-(countRow-1)*iSplitterHeight, countRow*m_iMinWinHeight);
+	m_iTotalWidth = std::max(rc->Width()-(numberColumn-1)*iSplitterWidth, numberColumn*m_iMinWinWidth);
+	m_iTotalHeight = std::max(rc->Height()-(numberRow-1)*iSplitterHeight, numberRow*m_iMinWinHeight);
 		// 
 	int cx,cy;
 		// 
@@ -868,8 +868,8 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	int iTotalOver = 0;
 	int pos = rc->left;
 		// 
-	for(int c=0; c<countColumn; ++c)
-	{	if(c!=countColumn-1)
+	for(int c=0; c<numberColumn; ++c)
+	{	if(c!=numberColumn-1)
 			cx = static_cast<int>(static_cast<double>(m_iTotalWidth) * GetCell(0,c)->real.factor.width + 0.5);
 		else	// last column.
 			cx = rc->right-pos;
@@ -884,18 +884,18 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapLeftBottom)
 	{	pos = rc->left;
 			// 
-		for(int c=0; c<countColumn; ++c)
-		{	if(c!=countColumn-1)
+		for(int c=0; c<numberColumn; ++c)
+		{	if(c!=numberColumn-1)
 				cx = static_cast<int>(static_cast<double>(m_iTotalWidth) * GetCell(0,c)->real.factor.width + 0.5);
 			else	// last column.
 				cx = rc->right-pos;
 				// 
-			if(c!=countColumn-1)	// except last column.
+			if(c!=numberColumn-1)	// except last column.
 				if(cx>m_iMinWinWidth)
 					cx -= static_cast<int>(static_cast<float>(iCorrectedTail) * (static_cast<float>(cx-m_iMinWinWidth) / static_cast<float>(iTotalOver)) + 0.5f);
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(int r=0; r<countRow; ++r)
+			for(int r=0; r<numberRow; ++r)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.left = pos;
 				cell->real.rc.right = pos+cx;
@@ -907,18 +907,18 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	else	// RightTop or RightBottom.
 	{	pos = rc->right;
 			// 
-		for(int c=0; c<countColumn; ++c)
-		{	if(c!=countColumn-1)
+		for(int c=0; c<numberColumn; ++c)
+		{	if(c!=numberColumn-1)
 				cx = static_cast<int>(static_cast<double>(m_iTotalWidth) * GetCell(0,c)->real.factor.width + 0.5);
 			else	// last column.
 				cx = pos-rc->left;
 				// 
-			if(c!=countColumn-1)	// except last column.
+			if(c!=numberColumn-1)	// except last column.
 				if(cx>m_iMinWinWidth)
 					cx -= static_cast<int>(static_cast<float>(iCorrectedTail) * (static_cast<float>(cx - m_iMinWinWidth) / static_cast<float>(iTotalOver)) + 0.5f);
 			cx = std::max(cx,m_iMinWinWidth);
 				// 
-			for(int r=0; r<countRow; ++r)
+			for(int r=0; r<numberRow; ++r)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.left = pos-cx;
 				cell->real.rc.right = pos;
@@ -932,8 +932,8 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	iCorrectedTail = iTotalOver = 0;
 	pos = rc->top;
 		// 
-	for(int r=0; r<countRow; ++r)
-	{	if(r!=countRow-1)
+	for(int r=0; r<numberRow; ++r)
+	{	if(r!=numberRow-1)
 			cy = static_cast<int>(static_cast<double>(m_iTotalHeight) * GetCell(r,0)->real.factor.height + 0.5);
 		else	// last row.
 			cy = rc->bottom-pos;
@@ -948,18 +948,18 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	if(m_SnapMode==SnapLeftTop || m_SnapMode==SnapRightTop)
 	{	pos = rc->top;
 			// 
-		for(int r=0; r<countRow; ++r)
-		{	if(r!=countRow-1)
+		for(int r=0; r<numberRow; ++r)
+		{	if(r!=numberRow-1)
 				cy = static_cast<int>(static_cast<double>(m_iTotalHeight) * GetCell(r,0)->real.factor.height + 0.5);
 			else	// last row.
 				cy = rc->bottom-pos;
 				// 
-			if(r!=countRow-1)	// except last row.
+			if(r!=numberRow-1)	// except last row.
 				if(cy>m_iMinWinHeight)
 					cy -= static_cast<int>(static_cast<float>(iCorrectedTail) * (static_cast<float>(cy - m_iMinWinHeight) / static_cast<float>(iTotalOver)) + 0.5f);
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(int c=0; c<countColumn; ++c)
+			for(int c=0; c<numberColumn; ++c)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.top = pos;
 				cell->real.rc.bottom = pos+cy;
@@ -974,18 +974,18 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int countRow, int countColu
 	else	// LeftBottom or RightBottom.
 	{	pos = rc->bottom;
 			// 
-		for(int r=0; r<countRow; ++r)
-		{	if(r!=countRow-1)
+		for(int r=0; r<numberRow; ++r)
+		{	if(r!=numberRow-1)
 				cy = static_cast<int>(static_cast<double>(m_iTotalHeight) * GetCell(r,0)->real.factor.height + 0.5);
 			else	// last row.
 				cy = pos-rc->top;
 				// 
-			if(r!=countRow-1)	// except last row.
+			if(r!=numberRow-1)	// except last row.
 				if(cy>m_iMinWinHeight)
 					cy -= static_cast<int>(static_cast<float>(iCorrectedTail) * (static_cast<float>(cy - m_iMinWinHeight) / static_cast<float>(iTotalOver)) + 0.5f);
 			cy = std::max(cy,m_iMinWinHeight);
 				// 
-			for(int c=0; c<countColumn; ++c)
+			for(int c=0; c<numberColumn; ++c)
 			{	Cell *cell = GetCell(r,c);
 				cell->real.rc.top = pos-cy;
 				cell->real.rc.bottom = pos;
@@ -1071,8 +1071,8 @@ void SplitterCtrl::OnNcLButtonDown(UINT nHitTest, CPoint point)
 	if( IsDragging() )
 	{	p.m_ptStartDrag = pt;
 			// 
-		for(int r=0; r<GetCountRow(); ++r)
-			for(int c=0; c<GetCountColumn(); ++c)
+		for(int r=0; r<GetNumberRow(); ++r)
+			for(int c=0; c<GetNumberColumn(); ++c)
 			{	Private::Cell *cell = p.GetCell(r,c);
 				cell->store = cell->real;
 			}
@@ -1198,8 +1198,8 @@ void SplitterCtrl::Private::StopDragging(bool reset)
 	if((m_DraggingMode==DraggingStatic && !reset) ||
 		(m_DraggingMode==DraggingDynamic && reset))
 	{
-		for(int r=0; r<o.GetCountRow(); ++r)
-			for(int c=0; c<o.GetCountColumn(); ++c)
+		for(int r=0; r<o.GetNumberRow(); ++r)
+			for(int c=0; c<o.GetNumberColumn(); ++c)
 			{	Cell *cell = GetCell(r,c);
 				cell->real = cell->store;
 				if(cell->wnd)
@@ -1237,7 +1237,7 @@ void SplitterCtrl::Private::SetDraggingWidth(int col, int offset, std::map<HWND,
 		cx1 = totalcx - cx2;
 	}
 		// 
-	const int row = o.GetCountRow();
+	const int row = o.GetNumberRow();
 		// 
 	for(int r=0; r<row; ++r)
 	{	p1 = GetCell(r,col);
@@ -1318,7 +1318,7 @@ void SplitterCtrl::Private::SetDraggingHeight(int row, int offset, std::map<HWND
 		cy1 = totalcy - cy2;
 	}
 		// 
-	const int col = o.GetCountColumn();
+	const int col = o.GetNumberColumn();
 		// 
 	for(int c=0; c<col; ++c)
 	{	p1 = GetCell(row,c);
@@ -1397,7 +1397,7 @@ void SplitterCtrl::Private::SetHalfAlignWidth(int col)
 		cx1 = totalcx - cx2;
 	}
 		// 
-	const int row = o.GetCountRow();
+	const int row = o.GetNumberRow();
 		// 
 	for(int r=0; r<row; ++r)
 	{	p1 = GetCell(r,col);
@@ -1457,7 +1457,7 @@ void SplitterCtrl::Private::SetHalfAlignHeight(int row)
 		cy1 = totalcy - cy2;
 	}
 		// 
-	const int col = o.GetCountColumn();
+	const int col = o.GetNumberColumn();
 		// 
 	for(int c=0; c<col; ++c)
 	{	p1 = GetCell(row,c);
@@ -1502,8 +1502,8 @@ void SplitterCtrl::Private::SetHalfAlignHeight(int row)
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::HitTest(CPoint point, int *horz/*out,or null*/, int *vert/*out,or null*/) const
-{	const int row = GetCountRow();
-	const int col = GetCountColumn();
+{	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 		// 
 	if(row>0 && col>0)
 	{	if(vert)
@@ -1544,16 +1544,16 @@ void SplitterCtrl::HitTest(CPoint point, int *horz/*out,or null*/, int *vert/*ou
 /////////////////////////////////////////////////////////////////////////////
 // 
 RECT SplitterCtrl::GetWindowRect(int row, int col) const
-{	assert(row>=0 && row<GetCountRow());
-	assert(col>=0 && col<GetCountColumn());
+{	assert(row>=0 && row<GetNumberRow());
+	assert(col>=0 && col<GetNumberColumn());
 		// 
 	return p.GetCell(row,col)->real.rc;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
 RECT SplitterCtrl::GetSplitterRect(bool horz, int idx) const
-{	assert(idx>=0 && (horz && idx<GetCountRow()-1) || (!horz && idx<GetCountColumn()-1));
-	assert(GetCountColumn()>0 && GetCountRow()>0);
+{	assert(idx>=0 && (horz && idx<GetNumberRow()-1) || (!horz && idx<GetNumberColumn()-1));
+	assert(GetNumberColumn()>0 && GetNumberRow()>0);
 		// 
 	RECT rect;
 	GetClientRect(&rect/*out*/);
@@ -1620,8 +1620,8 @@ void SplitterCtrl::Private::DrawDragRectManage(CRect *rectOld, CRect const *rect
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::SetWindow(int row, int col, HWND wnd)
-{	assert(row>=0 && row<GetCountRow());
-	assert(col>=0 && col<GetCountColumn());
+{	assert(row>=0 && row<GetNumberRow());
+	assert(col>=0 && col<GetNumberColumn());
 	assert(!wnd || (::IsWindow(wnd) && ::GetParent(wnd)==m_hWnd));
 		// 
 	p.GetCell(row,col)->wnd = wnd;
@@ -1630,8 +1630,8 @@ void SplitterCtrl::SetWindow(int row, int col, HWND wnd)
 }
 // 
 HWND SplitterCtrl::GetWindow(int row, int col) const
-{	assert(row>=0 && row<GetCountRow());
-	assert(col>=0 && col<GetCountColumn());
+{	assert(row>=0 && row<GetNumberRow());
+	assert(col>=0 && col<GetNumberColumn());
 		// 
 	return p.GetCell(row,col)->wnd;
 }
@@ -1642,13 +1642,13 @@ HWND SplitterCtrl::GetWindow(int row, int col) const
 void SplitterCtrl::SetColumnWidthForStatic(int col, int width)
 {	assert(p.m_ResizeMode!=ResizeDynamic);
 		// 
-	assert(col>=0 && col<GetCountColumn());
-	assert(GetCountRow()>0 && GetCountColumn()>0);
+	assert(col>=0 && col<GetNumberColumn());
+	assert(GetNumberRow()>0 && GetNumberColumn()>0);
 	assert(width>=0);
 		// 
 	width = std::max(width,p.m_iMinWinWidth);
 		// 
-	const int row = GetCountRow();
+	const int row = GetNumberRow();
 	for(int r=0; r<row; ++r)
 		p.GetCell(r,col)->real.width = width;
 }
@@ -1658,13 +1658,13 @@ void SplitterCtrl::SetColumnWidthForStatic(int col, int width)
 void SplitterCtrl::SetRowHeightForStatic(int row, int height)
 {	assert(p.m_ResizeMode!=ResizeDynamic);
 		// 
-	assert(row>=0 && row<GetCountRow());
-	assert(GetCountRow()>0 && GetCountColumn()>0);
+	assert(row>=0 && row<GetNumberRow());
+	assert(GetNumberRow()>0 && GetNumberColumn()>0);
 	assert(height>=0);
 		// 
 	height = std::max(height,p.m_iMinWinHeight);
 		// 
-	const int col = GetCountColumn();
+	const int col = GetNumberColumn();
 	for(int c=0; c<col; ++c)
 		p.GetCell(row,c)->real.height = height;
 }
@@ -1675,23 +1675,23 @@ void SplitterCtrl::SetRowHeightForStatic(int row, int height)
 void SplitterCtrl::SetColumnWidthForDynamic(int col, float percent)
 {	assert(p.m_ResizeMode==ResizeDynamic);
 		// 
-	assert(col>=0 && col<GetCountColumn());
+	assert(col>=0 && col<GetNumberColumn());
 	assert(percent>0.1f && percent<99.9f);
 		// 
-	const int rowCount = GetCountRow();
-	const int colCount = GetCountColumn();
-	assert(rowCount>0 && colCount>0);
+	const int rowNumber = GetNumberRow();
+	const int colNumber = GetNumberColumn();
+	assert(rowNumber>0 && colNumber>0);
 		// 
 	const int totalWidth = p.m_iTotalWidth - p.GetCell(0,col)->real.width;   // without width of col.
 	double factor;
 		// 
-	for(int c=0; c<colCount; ++c)
+	for(int c=0; c<colNumber; ++c)
 	{	if(c!=col)
 			factor = (1.0-static_cast<double>(percent)/100.0) * static_cast<double>(p.GetCell(0,c)->real.width)/static_cast<double>(totalWidth);
 		else
 			factor = static_cast<double>(percent)/100.0;
 			// 
-		for(int r=0; r<rowCount; ++r)
+		for(int r=0; r<rowNumber; ++r)
 			p.GetCell(r,c)->real.factor.width = factor;
 	}
 }
@@ -1701,35 +1701,35 @@ void SplitterCtrl::SetColumnWidthForDynamic(int col, float percent)
 void SplitterCtrl::SetRowHeightForDynamic(int row, float percent)
 {	assert(p.m_ResizeMode==ResizeDynamic);
 		// 
-	assert(row>=0 && row<GetCountRow());
+	assert(row>=0 && row<GetNumberRow());
 	assert(percent>0.1f && percent<99.9f);
 		// 
-	const int rowCount = GetCountRow();
-	const int colCount = GetCountColumn();
-	assert(rowCount>0 && colCount>0);
+	const int rowNumber = GetNumberRow();
+	const int colNumber = GetNumberColumn();
+	assert(rowNumber>0 && colNumber>0);
 		// 
 	const int totalHeight = p.m_iTotalHeight - p.GetCell(row,0)->real.height;   // without height of row.
 	double factor;
 		// 
-	for(int r=0; r<rowCount; ++r)
+	for(int r=0; r<rowNumber; ++r)
 	{	if(r!=row)
 			factor = (1.0-static_cast<double>(percent)/100.0) * static_cast<double>(p.GetCell(r,0)->real.height)/static_cast<double>(totalHeight);
 		else
 			factor = static_cast<double>(percent)/100.0;
 			// 
-		for(int c=0; c<colCount; ++c)
+		for(int c=0; c<colNumber; ++c)
 			p.GetCell(r,c)->real.factor.height = factor;
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-// Set width for every column (number items in 'percent'==GetCountColumn()).
+// Set width for every column (number items in 'percent'==GetNumberColumn()).
 // 
 void SplitterCtrl::SetColumnWidthsForDynamic(int const *percent/*in*/)
 {	assert(p.m_ResizeMode==ResizeDynamic);
 		// 
-	const int row = GetCountRow();
-	const int col = GetCountColumn();
+	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 	assert(row>0 && col>0);
 		// 
 	__try
@@ -1740,7 +1740,7 @@ void SplitterCtrl::SetColumnWidthsForDynamic(int const *percent/*in*/)
 		if(count!=100) return;
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
-	{	assert(!"count items in 'percent' != GetCountColumn()");
+	{	assert(!"count items in 'percent' != GetNumberColumn()");
 		return;
 	}
 		// 
@@ -1763,13 +1763,13 @@ void SplitterCtrl::SetColumnWidthsForDynamic(int const *percent/*in*/)
 	}
 }
 /////////////////////////////////////////////////////////////////////////////
-// Set height for every row (number items in 'percent'==GetCountRow()).
+// Set height for every row (number items in 'percent'==GetNumberRow()).
 // 
 void SplitterCtrl::SetRowHeightsForDynamic(int const *percent/*in*/)
 {	assert(p.m_ResizeMode==ResizeDynamic);
 		// 
-	const int row = GetCountRow();
-	const int col = GetCountColumn();
+	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 	assert(row>0 && col>0);
 		// 
 	__try
@@ -1780,7 +1780,7 @@ void SplitterCtrl::SetRowHeightsForDynamic(int const *percent/*in*/)
 		if(count!=100) return;
 	}
 	__except(EXCEPTION_EXECUTE_HANDLER)
-	{	assert(!"count items in 'percent' != GetCountRow()");
+	{	assert(!"count items in 'percent' != GetNumberRow()");
 		return;
 	}
 		// 
@@ -1806,8 +1806,8 @@ void SplitterCtrl::SetRowHeightsForDynamic(int const *percent/*in*/)
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::SetRowsEqualHeight()
-{	const int row = GetCountRow();
-	const int col = GetCountColumn();
+{	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 	assert(row>0 && col>0);
 		// 
 	int height, tail=0;
@@ -1830,8 +1830,8 @@ void SplitterCtrl::SetRowsEqualHeight()
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::SetColumnsEqualWidth()
-{	const int row = GetCountRow();
-	const int col = GetCountColumn();
+{	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 	assert(row>0 && col>0);
 		// 
 	int width, tail=0;
@@ -1875,12 +1875,12 @@ int SplitterCtrl::GetHeightMinWindow() const
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
-int SplitterCtrl::GetCountRow() const
-{	return p.m_Matrix.GetCountRow();
+int SplitterCtrl::GetNumberRow() const
+{	return p.m_Matrix.GetNumberRow();
 }
 // 
-int SplitterCtrl::GetCountColumn() const
-{	return p.m_Matrix.GetCountColumn();
+int SplitterCtrl::GetNumberColumn() const
+{	return p.m_Matrix.GetNumberColumn();
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -1933,30 +1933,30 @@ void SplitterCtrl::CancelDragging()
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::ActivateHorzSplitter(int idx, bool active)
-{	assert(idx>=0 && idx<GetCountRow()-1);
-	assert(GetCountColumn()>0);
+{	assert(idx>=0 && idx<GetNumberRow()-1);
+	assert(GetNumberColumn()>0);
 		// 
 	p.GetCell(idx,0)->splitterActive.horz = active;
 }
 // 
 bool SplitterCtrl::IsHorzSplitterActive(int idx) const
-{	assert(idx>=0 && idx<GetCountRow()-1);
-	assert(GetCountColumn()>0);
+{	assert(idx>=0 && idx<GetNumberRow()-1);
+	assert(GetNumberColumn()>0);
 		// 
 	return p.GetCell(idx,0)->splitterActive.horz;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::ActivateVertSplitter(int idx, bool active)
-{	assert(GetCountRow()>0);
-	assert(idx>=0 && idx<GetCountColumn()-1);
+{	assert(GetNumberRow()>0);
+	assert(idx>=0 && idx<GetNumberColumn()-1);
 		// 
 	p.GetCell(0,idx)->splitterActive.vert = active;
 }
 // 
 bool SplitterCtrl::IsVertSplitterActive(int idx) const
-{	assert(GetCountRow()>0);
-	assert(idx>=0 && idx<GetCountColumn()-1);
+{	assert(GetNumberRow()>0);
+	assert(idx>=0 && idx<GetNumberColumn()-1);
 		// 
 	return p.GetCell(0,idx)->splitterActive.vert;
 }
@@ -2041,8 +2041,8 @@ bool SplitterCtrl::LoadState(CWinApp *app, TCHAR const *section, TCHAR const *en
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::SaveState(CArchive *ar) const
-{	const int row = GetCountRow();
-	const int col = GetCountColumn();
+{	const int row = GetNumberRow();
+	const int col = GetNumberColumn();
 		// 
 	*ar << row;
 	*ar << col;
@@ -2066,7 +2066,7 @@ void SplitterCtrl::LoadState(CArchive *ar)
 	*ar >> row;
 	*ar >> col;
 		// 
-	assert(row==GetCountRow() && col==GetCountColumn());
+	assert(row==GetNumberRow() && col==GetNumberColumn());
 		// 
 	if(row>0 && col>0)
 	{	int width,height;
@@ -2120,21 +2120,21 @@ int SplitterCtrlStyle1::GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc 
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle1::DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int count, int size, COLORREF color)
+void SplitterCtrlStyle1::DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color)
 {	if(horz)
-	{	int x = rect->CenterPoint().x - (size*(count+count-1))/2;
+	{	int x = rect->CenterPoint().x - (size*(number+number-1))/2;
 		const int y = rect->CenterPoint().y - size/2;
 			// 
-		for(; count-->0; )
+		for(; number-->0; )
 		{	dc->FillSolidRect(x,y,size,size,color);
 			x += 2 * size;
 		}
 	}
 	else
 	{	const int x = rect->CenterPoint().x - size/2;
-		int y = rect->CenterPoint().y - (size*(count+count-1))/2;
+		int y = rect->CenterPoint().y - (size*(number+number-1))/2;
 			// 
-		for(; count-->0; )
+		for(; number-->0; )
 		{	dc->FillSolidRect(x,y,size,size,color);
 			y += 2 * size;
 		}
@@ -2174,8 +2174,8 @@ void SplitterCtrlStyle1::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRec
 void SplitterCtrlStyle1::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
 {	if( IsInnerBorderVisible() )
 	{	const SplitterCtrl::Snap snap = ctrl->GetSnapMode();
-		const int row = ctrl->GetCountRow();
-		const int col = ctrl->GetCountColumn();
+		const int row = ctrl->GetNumberRow();
+		const int col = ctrl->GetNumberColumn();
 			// 
 		CPen penBorder(PS_SOLID,1, GetInnerBorderColor() );
 		CPen *oldPen = dc->SelectObject(&penBorder);
@@ -2240,8 +2240,8 @@ void SplitterCtrlStyle7::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bo
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrlStyle7::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
-{	const int row = ctrl->GetCountRow() - 1;
-	const int col = ctrl->GetCountColumn() - 1;
+{	const int row = ctrl->GetNumberRow() - 1;
+	const int col = ctrl->GetNumberColumn() - 1;
 		// 
 	for(int r=0; r<row; ++r)
 		for(int c=0; c<col; ++c)
@@ -2271,8 +2271,8 @@ void SplitterCtrlStyle8::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRec
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrlStyle8::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
-{	const int row = ctrl->GetCountRow() - 1;
-	const int col = ctrl->GetCountColumn() - 1;
+{	const int row = ctrl->GetNumberRow() - 1;
+	const int col = ctrl->GetNumberColumn() - 1;
 	const COLORREF clr = ::GetSysColor(COLOR_BTNFACE);
 		// 
 	for(int r=0; r<row; ++r)
