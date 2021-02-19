@@ -1001,10 +1001,10 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int numberRow, int numberCo
 /////////////////////////////////////////////////////////////////////////////
 // 
 void SplitterCtrl::Private::MoveChangedWindow(HWND wnd, CRect const *rc) const
-{	CRect rcwin;
-	::GetClientRect(wnd,&rcwin);
-	::MapWindowPoints(wnd,o.m_hWnd,reinterpret_cast<POINT*>(&rcwin),2);
-	if(rcwin!=*rc)
+{	CRect rcWin;
+	::GetWindowRect(wnd,&rcWin);
+	o.ScreenToClient(&rcWin);
+	if(rcWin!=*rc)
 		::MoveWindow(wnd,rc->left,rc->top,rc->Width(),rc->Height(),TRUE);
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -1014,7 +1014,7 @@ LRESULT SplitterCtrl::OnNcHitTest(CPoint point)
 {	CPoint pt(point);
 	ScreenToClient(&pt);
 		// 
-	int col, row;
+	int row, col;
 	HitTest(pt,&row,&col);
 		// 
 	if(row!=-1 && !IsHorzSplitterActive(row))
