@@ -1000,12 +1000,12 @@ void SplitterCtrl::Private::RecalcDynamic(CRect *rc, int numberRow, int numberCo
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrl::Private::MoveChangedWindow(HWND wnd, CRect const *rc) const
-{	CRect rcWin;
-	::GetWindowRect(wnd,&rcWin);
-	o.ScreenToClient(&rcWin);
-	if(rcWin!=*rc)
-		::MoveWindow(wnd,rc->left,rc->top,rc->Width(),rc->Height(),TRUE);
+void SplitterCtrl::Private::MoveChangedWindow(HWND wnd, CRect const *rcNew) const
+{	CRect rcOld;
+	::GetWindowRect(wnd,&rcOld/*out*/);
+	::MapWindowPoints(HWND_DESKTOP,o.m_hWnd,reinterpret_cast<POINT *>(&rcOld),2);
+	if(*rcNew!=rcOld)
+		::MoveWindow(wnd,rcNew->left,rcNew->top,rcNew->Width(),rcNew->Height(),TRUE);
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
