@@ -18,16 +18,16 @@ class SplitterCtrl : public CWnd
 ///////////////////////////////////////
 public:
 	struct Draw
-	{	virtual void DrawBegin(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) const {}
-		virtual void DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, int /*idx*/, CRect const * /*rect*/) const {}
-		virtual void DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, bool /*firstTime*/, CRect const * /*rectOld*/, CRect const * /*rectNew*/) const {}
-		virtual void DrawBorder(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, CRect const * /*rect*/) const {}
-		virtual void DrawEnd(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) const {}
+	{	virtual void DrawBegin(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) {}
+		virtual void DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, int /*idx*/, CRect const * /*rect*/) {}
+		virtual void DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, bool /*horz*/, bool /*firstTime*/, CRect const * /*rectOld*/, CRect const * /*rectNew*/) {}
+		virtual void DrawBorder(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/, CRect const * /*rect*/) {}
+		virtual void DrawEnd(SplitterCtrl const * /*ctrl*/, CDC * /*dc*/) {}
 	};
 	interface IRecalc
-	{	virtual int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const = 0;
-		virtual int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const = 0;   // width of vertical splitter.
-		virtual int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const = 0;   // height of horizontal splitter.
+	{	virtual int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc *base) = 0;
+		virtual int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base) = 0;   // width of vertical splitter.
+		virtual int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base) = 0;   // height of horizontal splitter.
 	};
 
 public:
@@ -150,82 +150,82 @@ struct SplitterCtrlStyle1 :
 
 protected:
 		// SplitterCtrl::Draw.
-	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const override;
-	void DrawDragRect(SplitterCtrl const *ctrl, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew) const override;
-	void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) const override;
-	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const override;
+	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) override;
+	void DrawDragRect(SplitterCtrl const *ctrl, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew) override;
+	void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) override;
+	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) override;
 
 		// SplitterCtrl::IRecalc.
-	int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
-	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
-	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const override;
+	int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc *base) override;
+	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base) override;
+	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base) override;
 
-	virtual COLORREF GetBackgroundColor() const { return ::GetSysColor(COLOR_WINDOW); }
-	virtual bool IsInnerBorderVisible() const { return true; }
-	virtual COLORREF GetInnerBorderColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
-	virtual COLORREF GetOuterBorderColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
-	virtual bool IsDotsVisible() const { return true; }
-	virtual COLORREF GetDotsColor() const { return ::GetSysColor(COLOR_BTNSHADOW); }
-	virtual CBrush *GetDragBrush() const { return NULL; }
+	virtual COLORREF GetBackgroundColor() { return ::GetSysColor(COLOR_WINDOW); }
+	virtual bool IsInnerBorderVisible() { return true; }
+	virtual COLORREF GetInnerBorderColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
+	virtual COLORREF GetOuterBorderColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
+	virtual bool IsDotsVisible() { return true; }
+	virtual COLORREF GetDotsColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
+	virtual CBrush *GetDragBrush() { return NULL; }
 
-	static void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color);
+	void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color) const;
 };
 // 
 class SplitterCtrlStyle2 : public SplitterCtrlStyle1
-{	bool IsDotsVisible() const override { return false; }
+{	bool IsDotsVisible() override { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
 class SplitterCtrlStyle3 : public SplitterCtrlStyle1
-{	COLORREF GetBackgroundColor() const override { return ::GetSysColor(COLOR_BTNFACE); }
-	bool IsInnerBorderVisible() const override { return false; }
+{	COLORREF GetBackgroundColor() override { return ::GetSysColor(COLOR_BTNFACE); }
+	bool IsInnerBorderVisible() override { return false; }
 };
 // 
 class SplitterCtrlStyle4 : public SplitterCtrlStyle3
-{	bool IsDotsVisible() const override { return false; }
+{	bool IsDotsVisible() override { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
 class SplitterCtrlStyle5 : public SplitterCtrlStyle1
 {		// SplitterCtrl::IRecalc.
-	int GetVertSplitterWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const override { return 6; }
-	int GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const override { return 6; }
+	int GetVertSplitterWidth(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/) override { return 6; }
+	int GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/) override { return 6; }
 
-	COLORREF GetBackgroundColor() const override { return RGB(45,64,94); }
-	bool IsInnerBorderVisible() const override { return false; }
-	COLORREF GetOuterBorderColor() const override { return RGB(45,64,94); }
-	COLORREF GetDotsColor() const override { return RGB(206,212,223); }
-	CBrush *GetDragBrush() const override { static CBrush br(RGB(128,128,128)); return &br; }
+	COLORREF GetBackgroundColor() override { return RGB(45,64,94); }
+	bool IsInnerBorderVisible() override { return false; }
+	COLORREF GetOuterBorderColor() override { return RGB(45,64,94); }
+	COLORREF GetDotsColor() override { return RGB(206,212,223); }
+	CBrush *GetDragBrush() override { static CBrush br(RGB(128,128,128)); return &br; }
 };
 // 
 class SplitterCtrlStyle6 : public SplitterCtrlStyle5
-{	bool IsDotsVisible() const override { return false; }
+{	bool IsDotsVisible() override { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
 class SplitterCtrlStyle7 : public SplitterCtrlStyle1
 {		// SplitterCtrl::Draw.
-	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const override;
-	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const override;
+	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) override;
+	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) override;
 
-	bool IsInnerBorderVisible() const override { return false; }
-	COLORREF GetOuterBorderColor() const override { return RGB(77,115,61); }
-	bool IsDotsVisible() const override { return false; }
+	bool IsInnerBorderVisible() override { return false; }
+	COLORREF GetOuterBorderColor() override { return RGB(77,115,61); }
+	bool IsDotsVisible() override { return false; }
 
-	static void DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom);
+	void DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom) const;
 };
 /////////////////////////////////////////////////////////////////////////////
 // 
 class SplitterCtrlStyle8 : public SplitterCtrlStyle1
 {		// SplitterCtrl::Draw.
-	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) const override;
-	void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) const override;
-	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const override;
+	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) override;
+	void DrawBorder(SplitterCtrl const *ctrl, CDC *dc, CRect const *rect) override;
+	void DrawEnd(SplitterCtrl const *ctrl, CDC *dc) override;
 
 		// SplitterCtrl::IRecalc.
-	int GetBorderWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const override { return 2; }
+	int GetBorderWidth(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/) override { return 2; }
 
-	bool IsInnerBorderVisible() const override { return false; }
+	bool IsInnerBorderVisible() override { return false; }
 };
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////

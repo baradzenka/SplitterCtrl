@@ -155,9 +155,9 @@ private:
 	SplitterCtrl &o;
 
 private:   // SplitterCtrl::IRecalc.
-	int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
-	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
-	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const override;
+	int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc *base) override;
+	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base) override;
+	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base) override;
 
 public:
 	Draw *m_pDrawMngr;
@@ -610,13 +610,13 @@ int SplitterCtrl::GetHorzSplitterHeight() const
 }
 /////////////////////////////////////////////////////////////////////////////
 //
-int SplitterCtrl::Private::GetBorderWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const
+int SplitterCtrl::Private::GetBorderWidth(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/)
 {	return 1;
 }
-int SplitterCtrl::Private::GetVertSplitterWidth(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const
+int SplitterCtrl::Private::GetVertSplitterWidth(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/)
 {	return 4;
 }
-int SplitterCtrl::Private::GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, IRecalc const * /*base*/) const
+int SplitterCtrl::Private::GetHorzSplitterHeight(SplitterCtrl const * /*ctrl*/, IRecalc * /*base*/)
 {	return 4;
 }
 /////////////////////////////////////////////////////////////////////////////
@@ -2107,20 +2107,20 @@ void SplitterCtrlStyle1::Install(SplitterCtrl *ctrl)
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-int SplitterCtrlStyle1::GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const
+int SplitterCtrlStyle1::GetBorderWidth(SplitterCtrl const *ctrl, IRecalc *base)
 {	return base->GetBorderWidth(ctrl,NULL);
 }
 // 
-int SplitterCtrlStyle1::GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const
+int SplitterCtrlStyle1::GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base)
 {	return base->GetVertSplitterWidth(ctrl,NULL) + IsInnerBorderVisible()*2/*inner borders*/;
 }
 // 
-int SplitterCtrlStyle1::GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const
+int SplitterCtrlStyle1::GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base)
 {	return base->GetHorzSplitterHeight(ctrl,NULL) + IsInnerBorderVisible()*2/*inner borders*/;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle1::DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color)
+void SplitterCtrlStyle1::DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color) const
 {	if(horz)
 	{	int x = rect->CenterPoint().x - (size*(number+number-1))/2;
 		const int y = rect->CenterPoint().y - size/2;
@@ -2141,14 +2141,14 @@ void SplitterCtrlStyle1::DrawSplitterDots(CDC *dc, CRect const *rect, bool horz,
 	}
 }
 // 
-void SplitterCtrlStyle1::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, int /*idx*/, CRect const *rect) const
+void SplitterCtrlStyle1::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, int /*idx*/, CRect const *rect)
 {	dc->FillSolidRect(rect, GetBackgroundColor() );
 	if( IsDotsVisible() )
 		DrawSplitterDots(dc,rect, horz, 6,2, GetDotsColor() );
 }
 /////////////////////////////////////////////////////////////////////////////
 //
-void SplitterCtrlStyle1::DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew) const
+void SplitterCtrlStyle1::DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew)
 {	CRect rcOld=*rectOld, rcNew=*rectNew;
 	if( IsInnerBorderVisible() )
 		if(horz)
@@ -2165,13 +2165,13 @@ void SplitterCtrlStyle1::DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC *dc, bo
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle1::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRect const *rect) const
+void SplitterCtrlStyle1::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRect const *rect)
 {	const COLORREF clr = GetOuterBorderColor();
 	dc->Draw3dRect(rect,clr,clr);
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle1::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
+void SplitterCtrlStyle1::DrawEnd(SplitterCtrl const *ctrl, CDC *dc)
 {	if( IsInnerBorderVisible() )
 	{	const SplitterCtrl::Snap snap = ctrl->GetSnapMode();
 		const int row = ctrl->GetNumberRow();
@@ -2225,7 +2225,7 @@ void SplitterCtrlStyle1::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle7::DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom)
+void SplitterCtrlStyle7::DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom) const
 {	GRADIENT_RECT gRect = {0,1};
 	TRIVERTEX vert[2] = 
 	{	{rc->left,rc->top,static_cast<COLOR16>((GetRValue(clrTop) << 8)),static_cast<COLOR16>((GetGValue(clrTop) << 8)),static_cast<COLOR16>((GetBValue(clrTop) << 8)),0},
@@ -2234,12 +2234,12 @@ void SplitterCtrlStyle7::DrawGradient(CDC *dc, CRect const *rc, bool horz, COLOR
 	::GradientFill(dc->m_hDC,vert,2,&gRect,1,(horz ? GRADIENT_FILL_RECT_H : GRADIENT_FILL_RECT_V));
 }
 // 
-void SplitterCtrlStyle7::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, int /*idx*/, CRect const *rect) const
+void SplitterCtrlStyle7::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool horz, int /*idx*/, CRect const *rect)
 {	DrawGradient(dc,rect,!horz,RGB(245,245,245),RGB(160,165,170));
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle7::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
+void SplitterCtrlStyle7::DrawEnd(SplitterCtrl const *ctrl, CDC *dc)
 {	const int row = ctrl->GetNumberRow() - 1;
 	const int col = ctrl->GetNumberColumn() - 1;
 		// 
@@ -2260,17 +2260,17 @@ void SplitterCtrlStyle7::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle8::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool /*horz*/, int /*idx*/, CRect const *rect) const
+void SplitterCtrlStyle8::DrawSplitter(SplitterCtrl const * /*ctrl*/, CDC *dc, bool /*horz*/, int /*idx*/, CRect const *rect)
 {	dc->DrawEdge(const_cast<CRect *>(rect),EDGE_RAISED,BF_RECT);
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle8::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRect const *rect) const
+void SplitterCtrlStyle8::DrawBorder(SplitterCtrl const * /*ctrl*/, CDC *dc, CRect const *rect)
 {	dc->DrawEdge(const_cast<CRect *>(rect),EDGE_SUNKEN,BF_RECT);
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-void SplitterCtrlStyle8::DrawEnd(SplitterCtrl const *ctrl, CDC *dc) const
+void SplitterCtrlStyle8::DrawEnd(SplitterCtrl const *ctrl, CDC *dc)
 {	const int row = ctrl->GetNumberRow() - 1;
 	const int col = ctrl->GetNumberColumn() - 1;
 	const COLORREF clr = ::GetSysColor(COLOR_BTNFACE);
