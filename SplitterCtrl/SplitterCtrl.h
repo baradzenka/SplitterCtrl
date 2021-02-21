@@ -148,7 +148,7 @@ struct SplitterCtrlStyle1 :
 {
 	void Install(SplitterCtrl *ctrl);
 
-protected:
+private:
 		// SplitterCtrl::Draw.
 	void DrawSplitter(SplitterCtrl const *ctrl, CDC *dc, bool horz, int idx, CRect const *rect) override;
 	void DrawDragRect(SplitterCtrl const *ctrl, CDC *dc, bool horz, bool firstTime, CRect const *rectOld, CRect const *rectNew) override;
@@ -160,6 +160,7 @@ protected:
 	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base) override;
 	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base) override;
 
+protected:
 	virtual COLORREF GetBackgroundColor() { return ::GetSysColor(COLOR_WINDOW); }
 	virtual bool IsInnerBorderVisible() { return true; }
 	virtual COLORREF GetInnerBorderColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
@@ -212,6 +213,7 @@ class SplitterCtrlStyle7 : public SplitterCtrlStyle1
 	COLORREF GetOuterBorderColor() override { return RGB(77,115,61); }
 	bool IsDotsVisible() override { return false; }
 
+protected:
 	void DrawGradient(CDC *dc, CRect const *rc, bool horz, COLORREF clrTop, COLORREF clrBottom) const;
 };
 /////////////////////////////////////////////////////////////////////////////
