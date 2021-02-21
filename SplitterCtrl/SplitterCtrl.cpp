@@ -155,9 +155,9 @@ private:
 	SplitterCtrl &o;
 
 private:   // SplitterCtrl::IRecalc.
-	virtual int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const;
-	virtual int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const;
-	virtual int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const;
+	int GetBorderWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
+	int GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc const *base) const override;
+	int GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc const *base) const override;
 
 public:
 	Draw *m_pDrawMngr;
