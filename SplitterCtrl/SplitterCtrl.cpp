@@ -215,7 +215,7 @@ public:
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 const CSize SplitterCtrl::Private::m_szDefWindowSize(100,100);
-HHOOK SplitterCtrl::Private::m_hKeyboardHook = NULL;
+HHOOK SplitterCtrl::Private::m_hKeyboardHook = nullptr;
 std::pair<SplitterCtrl *,void (SplitterCtrl::*)()> SplitterCtrl::Private::m_pFuncCancelDragging;
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -251,7 +251,7 @@ SplitterCtrl::~SplitterCtrl()
 /////////////////////////////////////////////////////////////////////////////
 // 
 SplitterCtrl::Private::Private(SplitterCtrl &owner) : o(owner)
-{	m_pDrawMngr = NULL;
+{	m_pDrawMngr = nullptr;
 	m_pRecalcMngr = this;
 		// 
 	m_SnapMode = SnapLeftTop;
@@ -259,11 +259,13 @@ SplitterCtrl::Private::Private(SplitterCtrl &owner) : o(owner)
 	m_DraggingMode = DraggingStatic;
 	m_iMinWinWidth = m_iMinWinHeight = 0;
 	m_bShowBorder = true;
-	m_hCurHorz = m_hCurVert = m_hCurCross = NULL;
+	m_hCurHorz = m_hCurVert = m_hCurCross = nullptr;
 }
 //
 SplitterCtrl::Private::~Private()
-{	if(m_hCurHorz)
+{	o.DestroyWindow();
+		// 
+	if(m_hCurHorz)
 		::DestroyCursor(m_hCurHorz);
 	if(m_hCurVert)
 		::DestroyCursor(m_hCurVert);
@@ -281,12 +283,12 @@ bool SplitterCtrl::Create(CWnd *parentWnd, DWORD style, RECT const &rect, UINT i
 {	p.m_iTotalWidth = p.m_iTotalHeight = 0;
 	p.m_bDragHorz = p.m_bDragVert = p.m_bDragCross = false;
 		// 
-	const CString classname = AfxRegisterWndClass(CS_DBLCLKS,::LoadCursor(NULL,IDC_ARROW),NULL,NULL);
+	const CString classname = AfxRegisterWndClass(CS_DBLCLKS,::LoadCursor(nullptr,IDC_ARROW),nullptr,nullptr);
 	if( !CWnd::Create(classname,_T(""),style | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,rect,parentWnd,id) )
 		return false;
 		// 
 	if(!p.m_hCurHorz && !p.m_hCurVert && !p.m_hCurCross)
-		SetCursors(::LoadCursor(NULL,IDC_SIZENS),::LoadCursor(NULL,IDC_SIZEWE),::LoadCursor(NULL,IDC_SIZEALL));
+		SetCursors(::LoadCursor(nullptr,IDC_SIZENS),::LoadCursor(nullptr,IDC_SIZEWE),::LoadCursor(nullptr,IDC_SIZEALL));
 		// 
 	return true;
 }
@@ -315,15 +317,15 @@ void SplitterCtrl::SetCursors(HCURSOR horz, HCURSOR vert, HCURSOR cross)
 void SplitterCtrl::SetCursors(HMODULE module, UINT horz, UINT vert, UINT cross)
 {	if(p.m_hCurHorz)
 	{	::DestroyCursor(p.m_hCurHorz);
-		p.m_hCurHorz = NULL;
+		p.m_hCurHorz = nullptr;
 	}
 	if(p.m_hCurVert)
 	{	::DestroyCursor(p.m_hCurVert);
-		p.m_hCurVert = NULL;
+		p.m_hCurVert = nullptr;
 	}
 	if(p.m_hCurCross)
 	{	::DestroyCursor(p.m_hCurCross);
-		p.m_hCurCross = NULL;
+		p.m_hCurCross = nullptr;
 	}
 		// 
 	if(horz)
@@ -366,7 +368,7 @@ bool SplitterCtrl::AddRow()
 				// 
          p1->real.height = p.m_szDefWindowSize.cy;
 			p1->real.factor.height = 1.0;
-			p1->wnd = NULL;
+			p1->wnd = nullptr;
 			p1->splitterActive.horz = p1->splitterActive.vert = true;
 		}
 	else
@@ -378,7 +380,7 @@ bool SplitterCtrl::AddRow()
 			p1->real.height = p.m_szDefWindowSize.cy;
 			p1->real.factor.height = p2->real.factor.height/2.0;
 			p2->real.factor.height -= p1->real.factor.height;
-			p1->wnd = NULL;
+			p1->wnd = nullptr;
 			p1->splitterActive.horz = p1->splitterActive.vert = true;
 		}
 		// 
@@ -407,7 +409,7 @@ bool SplitterCtrl::AddColumn()
 				p2->real.factor.height -= p1->real.factor.height;
 			}
 			p1->real.height = p.m_szDefWindowSize.cy;
-			p1->wnd = NULL;
+			p1->wnd = nullptr;
 			p1->splitterActive.horz = p1->splitterActive.vert = true;
 		}
 	else
@@ -419,7 +421,7 @@ bool SplitterCtrl::AddColumn()
 			p2->real.factor.width -= p1->real.factor.width;
 			p1->real.height = p2->real.height;
 			p1->real.factor.height = p2->real.factor.height;
-			p1->wnd = NULL;
+			p1->wnd = nullptr;
 			p1->splitterActive.horz = p1->splitterActive.vert = true;
 		}
 		// 
@@ -451,7 +453,7 @@ bool SplitterCtrl::InsertRow(int r)
 			p1->real.factor.height = totalfactor - p3->real.factor.height - p2->real.factor.height;
 		}
 		p1->real.height = p.m_szDefWindowSize.cy;
-		p1->wnd = NULL;
+		p1->wnd = nullptr;
 		p1->splitterActive.horz = p1->splitterActive.vert = true;
 	}
 		// 
@@ -484,7 +486,7 @@ bool SplitterCtrl::InsertColumn(int c)
 			// 
 		p1->real.height = p2->real.height;
 		p1->real.factor.height = p2->real.factor.height;
-		p1->wnd = NULL;
+		p1->wnd = nullptr;
 		p1->splitterActive.horz = p1->splitterActive.vert = true;
 	}
 		// 
@@ -1077,7 +1079,7 @@ void SplitterCtrl::OnNcLButtonDown(UINT nHitTest, CPoint point)
 				cell->store = cell->real;
 			}
 		SetCapture();
-		if((Private::m_hKeyboardHook=::SetWindowsHookEx(WH_KEYBOARD,static_cast<HOOKPROC>(Private::KeyboardHookProc),NULL,::GetCurrentThreadId()))!=NULL)
+		if((Private::m_hKeyboardHook=::SetWindowsHookEx(WH_KEYBOARD,static_cast<HOOKPROC>(Private::KeyboardHookProc),nullptr,::GetCurrentThreadId()))!=nullptr)
 			p.m_pFuncCancelDragging = std::make_pair(this,&SplitterCtrl::CancelDragging);
 			// 
 		if(p.m_DraggingMode==DraggingStatic)
@@ -1158,12 +1160,12 @@ void SplitterCtrl::OnMouseMove(UINT nFlags, CPoint point)
 		{	const HDWP dwp = ::BeginDeferWindowPos( static_cast<int>( changedWindows.size() ) );
 			if(dwp)
 			{	for(std::map<HWND,CRect>::iterator i=changedWindows.begin(), e=changedWindows.end(); i!=e; ++i)
-					::DeferWindowPos(dwp, i->first, NULL, i->second.left,i->second.top,i->second.Width(),i->second.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+					::DeferWindowPos(dwp, i->first, nullptr, i->second.left,i->second.top,i->second.Width(),i->second.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 				::EndDeferWindowPos(dwp);
 			}
 			else
 				for(std::map<HWND,CRect>::iterator i=changedWindows.begin(), e=changedWindows.end(); i!=e; ++i)
-					::SetWindowPos(i->first, NULL, i->second.left,i->second.top,i->second.Width(),i->second.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
+					::SetWindowPos(i->first, nullptr, i->second.left,i->second.top,i->second.Width(),i->second.Height(), SWP_NOACTIVATE | SWP_NOZORDER);
 		}
 	}
 		// 
@@ -1190,9 +1192,9 @@ void SplitterCtrl::Private::StopDragging(bool reset)
 		// 
 	if(m_DraggingMode==DraggingStatic)
 	{	if(m_bDragHorz || m_bDragCross)
-			DrawDragRectHorz(NULL);
+			DrawDragRectHorz(nullptr);
 		if(m_bDragVert || m_bDragCross)
-			DrawDragRectVert(NULL);
+			DrawDragRectVert(nullptr);
 	}
 		// 
 	if((m_DraggingMode==DraggingStatic && !reset) ||
@@ -1210,7 +1212,7 @@ void SplitterCtrl::Private::StopDragging(bool reset)
 	m_bDragHorz = m_bDragVert = m_bDragCross = false;
 	if(m_hKeyboardHook)
 	{	::UnhookWindowsHookEx(m_hKeyboardHook);
-		m_hKeyboardHook = NULL;
+		m_hKeyboardHook = nullptr;
 	}
 	if( GetCapture() )
 		::ReleaseCapture();
@@ -1606,7 +1608,7 @@ void SplitterCtrl::Private::DrawDragRectManage(CRect *rectOld, CRect const *rect
 	}
 		// 
 	if(m_pDrawMngr)
-	{	CDC *dc = o.GetDCEx(NULL, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
+	{	CDC *dc = o.GetDCEx(nullptr, DCX_WINDOW | DCX_CACHE | DCX_LOCKWINDOWUPDATE);
 		if(dc)
 		{	m_pDrawMngr->DrawDragRect(&o,dc,horz,rectOld->IsRectNull()==TRUE,rectOld,&rcNew);
 			o.ReleaseDC(dc);
@@ -2013,7 +2015,7 @@ bool SplitterCtrl::LoadState(CWinApp *app, TCHAR const *section, TCHAR const *en
 {	assert(app && section && entry);
 		//
 	bool res = false;
-	BYTE *data = NULL;
+	BYTE *data = nullptr;
 	UINT dataSize;
 		// 
 	try
@@ -2108,15 +2110,15 @@ void SplitterCtrlStyle1::Install(SplitterCtrl *ctrl)
 /////////////////////////////////////////////////////////////////////////////
 // 
 int SplitterCtrlStyle1::GetBorderWidth(SplitterCtrl const *ctrl, IRecalc *base)
-{	return base->GetBorderWidth(ctrl,NULL);
+{	return base->GetBorderWidth(ctrl,nullptr);
 }
 // 
 int SplitterCtrlStyle1::GetVertSplitterWidth(SplitterCtrl const *ctrl, IRecalc *base)
-{	return base->GetVertSplitterWidth(ctrl,NULL) + IsInnerBorderVisible()*2/*inner borders*/;
+{	return base->GetVertSplitterWidth(ctrl,nullptr) + IsInnerBorderVisible()*2/*inner borders*/;
 }
 // 
 int SplitterCtrlStyle1::GetHorzSplitterHeight(SplitterCtrl const *ctrl, IRecalc *base)
-{	return base->GetHorzSplitterHeight(ctrl,NULL) + IsInnerBorderVisible()*2/*inner borders*/;
+{	return base->GetHorzSplitterHeight(ctrl,nullptr) + IsInnerBorderVisible()*2/*inner borders*/;
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
@@ -2161,7 +2163,7 @@ void SplitterCtrlStyle1::DrawDragRect(SplitterCtrl const * /*ctrl*/, CDC *dc, bo
 		}
 	CBrush *brush = GetDragBrush();
 	dc->DrawDragRect(&rcNew, CSize(rcNew.Width(),rcNew.Height()),
-		(firstTime ? NULL : &rcOld), CSize(rcOld.Width(),rcOld.Height()), brush,brush);
+		(firstTime ? nullptr : &rcOld), CSize(rcOld.Width(),rcOld.Height()), brush,brush);
 }
 /////////////////////////////////////////////////////////////////////////////
 // 

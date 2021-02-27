@@ -5,6 +5,7 @@
 #pragma once
 /////////////////////////////////////////////////////////////////////////////
 #if (!defined(_MSC_VER) && __cplusplus < 201103L) || (defined(_MSC_VER) && _MSC_VER < 1900)   // C++11 is not supported.
+	#define nullptr  NULL
 	#define override
 #endif
 /////////////////////////////////////////////////////////////////////////////
@@ -47,7 +48,7 @@ public:
 		// 
 	void SetDrawManager(Draw *p/*or null*/);
 	Draw *GetDrawManager();
-	void SetRecalcManager(IRecalc *p/*or null*/);   // NULL for default manager.
+	void SetRecalcManager(IRecalc *p/*or null*/);   // null for default manager.
 	IRecalc *GetRecalcManager();
 		// 
 	void SetCursors(HCURSOR horz, HCURSOR vert, HCURSOR cross);
@@ -123,7 +124,7 @@ private:
 ///////////////////////////////////////
 protected:
 	DECLARE_MESSAGE_MAP()
-	BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context = NULL) override;
+	BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context = nullptr) override;
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();
@@ -167,7 +168,7 @@ protected:
 	virtual COLORREF GetOuterBorderColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
 	virtual bool IsDotsVisible() { return true; }
 	virtual COLORREF GetDotsColor() { return ::GetSysColor(COLOR_BTNSHADOW); }
-	virtual CBrush *GetDragBrush() { return NULL; }
+	virtual CBrush *GetDragBrush() { return nullptr; }
 
 	void DrawSplitterDots(CDC *dc, CRect const *rect, bool horz, int number, int size, COLORREF color) const;
 };
