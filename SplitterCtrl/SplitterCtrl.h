@@ -76,8 +76,8 @@ public:
 	int GetNumberRow() const;
 	int GetNumberColumn() const;
 	void HitTest(CPoint point, int *horz/*out,or null*/, int *vert/*out,or null*/) const;   // searching splitter in point.
-	RECT GetWindowRect(int row, int col) const;
-	RECT GetSplitterRect(bool horz, int idx) const;
+	CRect GetWindowRect(int row, int col) const;
+	CRect GetSplitterRect(bool horz, int idx) const;
 		// 
 	enum Snap { SnapLeftTop, SnapLeftBottom, SnapRightTop, SnapRightBottom };
 	void SetSnapMode(Snap mode);
@@ -124,7 +124,7 @@ private:
 ///////////////////////////////////////
 protected:
 	DECLARE_MESSAGE_MAP()
-	BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context = nullptr) override;
+	BOOL Create(LPCTSTR className, LPCTSTR windowName, DWORD style, const RECT &rect, CWnd *parentWnd, UINT id, CCreateContext *context) override;
 	afx_msg void OnDestroy();
 	afx_msg void OnNcPaint();
 	afx_msg void OnPaint();

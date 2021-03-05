@@ -1545,7 +1545,7 @@ void SplitterCtrl::HitTest(CPoint point, int *horz/*out,or null*/, int *vert/*ou
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-RECT SplitterCtrl::GetWindowRect(int row, int col) const
+CRect SplitterCtrl::GetWindowRect(int row, int col) const
 {	assert(row>=0 && row<GetNumberRow());
 	assert(col>=0 && col<GetNumberColumn());
 		// 
@@ -1553,11 +1553,11 @@ RECT SplitterCtrl::GetWindowRect(int row, int col) const
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
-RECT SplitterCtrl::GetSplitterRect(bool horz, int idx) const
+CRect SplitterCtrl::GetSplitterRect(bool horz, int idx) const
 {	assert(idx>=0 && (horz && idx<GetNumberRow()-1) || (!horz && idx<GetNumberColumn()-1));
 	assert(GetNumberColumn()>0 && GetNumberRow()>0);
 		// 
-	RECT rect;
+	CRect rect;
 	GetClientRect(&rect/*out*/);
 		// 
 	if(horz)
