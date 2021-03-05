@@ -29,7 +29,6 @@ class DemoDlg : public CDialog
 	SplitterCtrlStyle7 m_SplitterStyle7;
 	SplitterCtrlStyle8 m_SplitterStyle8;
 	ChildWnd m_ChildWnd[9];
-	CRect m_rcInitSplitter;
 
 private:
 	void SetSplitterCtrlPos();

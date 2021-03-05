@@ -101,10 +101,7 @@ int DemoDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 BOOL DemoDlg::OnInitDialog()
 {	CDialog::OnInitDialog();
 		// 
-	GetDlgItem(IDC_SPLITTERCTRL_BASE)->GetWindowRect(&m_rcInitSplitter/*out*/);
-	ScreenToClient(&m_rcInitSplitter);
 	SetSplitterCtrlPos();
-	GetDlgItem(IDC_SPLITTERCTRL_BASE)->ShowWindow(SW_HIDE);
 		// 
 	m_Splitter.AddRow();
 	m_Splitter.AddRow();
@@ -164,10 +161,17 @@ void DemoDlg::OnDestroy()
 void DemoDlg::OnGetMinMaxInfo(MINMAXINFO *lpMMI)
 {	CDialog::OnGetMinMaxInfo(lpMMI);
 		// 
-	CRect rc(CPoint(0,0),CSize(m_rcInitSplitter.left+m_rcInitSplitter.top+2,m_rcInitSplitter.top+m_rcInitSplitter.top+2));
-	CalcWindowRect(&rc);
-	lpMMI->ptMinTrackSize.x = rc.Width();
-	lpMMI->ptMinTrackSize.y = rc.Height();
+	CWnd *baseWnd = GetDlgItem(IDC_SPLITTERCTRL_BASE);
+	if(baseWnd)
+	{	CRect rcBase;
+		baseWnd->GetWindowRect(&rcBase/*out*/);
+		ScreenToClient(&rcBase);
+			// 
+		CRect rc(CPoint(0,0),CSize(rcBase.left+rcBase.top+2,rcBase.top+rcBase.top+2));
+		CalcWindowRect(&rc);
+		lpMMI->ptMinTrackSize.x = rc.Width();
+		lpMMI->ptMinTrackSize.y = rc.Height();
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 // 
@@ -178,10 +182,18 @@ void DemoDlg::OnSize(UINT nType, int cx, int cy)
 }
 // 
 void DemoDlg::SetSplitterCtrlPos()
-{	CRect rc;
-	GetClientRect(&rc);
-	rc.DeflateRect(m_rcInitSplitter.left,m_rcInitSplitter.top,m_rcInitSplitter.top,m_rcInitSplitter.top);
-	m_Splitter.MoveWindow(&rc);
+{	CWnd *baseWnd = GetDlgItem(IDC_SPLITTERCTRL_BASE);
+		// 
+	if(baseWnd)
+	{	CRect rcBase;
+		baseWnd->GetWindowRect(&rcBase/*out*/);
+		ScreenToClient(&rcBase);
+			// 
+		CRect rc;
+		GetClientRect(&rc/*out*/);
+		rc.DeflateRect(rcBase.left,rcBase.top,rcBase.top,rcBase.top);
+		m_Splitter.MoveWindow(&rc);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
