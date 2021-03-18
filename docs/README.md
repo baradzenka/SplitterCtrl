@@ -57,3 +57,5 @@ m_Splitter.Update();
 You can manage the control as a normal matrix, dynamically insert and delete rows and columns (`AddRow`/`AddColumn`, `InsertRow`/`InsertColumn`, `DeleteRow`/`DeleteColumn`). The control makes it possible to assign the sizes (`SetColumnWidthForStatic`/`SetRowHeightForStatic`, `SetColumnWidthForDynamic`/`SetRowHeightForDynamic`), and also to equalize widths and heights of the cells (`SetColumnsEqualWidth`/`SetRowsEqualHeight`). The control is expected to call the `Update` function to show the results that are set by functions `InsertRow`, `DeleteColumn`, `SetRowHeightForStatic`, `SetColumnWidthsForDynamic`, etc. Also, you can save and load state of the control from the registry or other sources (`LoadState`/`SaveState`). To know all the possibilities, look at the opened interface of the `SplitterCtrl` class.
 
 Good luck! :-)
+
+[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/donate?business=HTC7VHPDL6U54&item_name=Thank+you+for+your+donation.+This+will+help+me+develop+great+things+further.&currency_code=USD)
