@@ -22,16 +22,25 @@ void ChildWnd::OnPaint()
 {	CPaintDC dc(this);
 		// 
 	CRect rc;
-	GetClientRect(&rc);
-	dc.FillSolidRect(rc,m_clrBackColor);
+	GetClientRect(&rc/*out*/);
 		// 
-	CString text, str;
-	GetWindowText(text);
-	str.Format(_T("\nWindow\n%s\n%d x %d"), text.GetString(),rc.Width(),rc.Height());
-		// 
-	HFONT hFontOld = static_cast<HFONT>( ::SelectObject(dc.m_hDC,::GetStockObject(DEFAULT_GUI_FONT)) );
-	dc.DrawText(str,rc,DT_CENTER);
-	::SelectObject(dc.m_hDC,hFontOld);
+	CDC dcMem;
+	CBitmap bmp;
+	if(dcMem.CreateCompatibleDC(&dc) && bmp.CreateCompatibleBitmap(&dc,rc.Width(),rc.Height()))
+	{	dcMem.SelectObject(&bmp);
+		dcMem.SetBkMode(TRANSPARENT);
+			// 
+		CString text, str;
+		GetWindowText(text/*out*/);
+		str.Format(_T("\nWindow\n%s\n%d x %d"), text.GetString(),rc.Width(),rc.Height());
+			// 
+		HFONT hFontOld = static_cast<HFONT>( ::SelectObject(dcMem.m_hDC,::GetStockObject(DEFAULT_GUI_FONT)) );
+		dcMem.FillSolidRect(rc,m_clrBackColor);
+		dcMem.DrawText(str,rc,DT_CENTER);
+		::SelectObject(dcMem.m_hDC,hFontOld);
+			// 
+		dc.BitBlt(0,0,rc.Width(),rc.Height(),&dcMem,0,0,SRCCOPY);
+	}
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
