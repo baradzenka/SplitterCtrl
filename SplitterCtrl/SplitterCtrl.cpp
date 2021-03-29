@@ -7,6 +7,7 @@
 #include <vector>
 #include <map>
 #include <cassert>
+#include <algorithm>
 #include "SplitterCtrl.h"
 /////////////////////////////////////////////////////////////////////////////
 #pragma warning(disable : 4355)   // 'this' : used in base member initializer list.
